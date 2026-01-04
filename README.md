@@ -9,6 +9,8 @@ we will set up the following flow:
 5. Download movie/series via Qbittorrent/SABNZBD
 6. Automatically look up subtitles & synchronise them with Bazarr
 7. Move to Jellyfin library & add to Jellyfin
+8. Give public access to Jellyfin with a secure reverse proxy via NPMplus + Crowdsec
+9. Manage unwatched files & unwatched requests with Maintainarr
 
 ## Table of Contents
 - [Automated Home Media Server](#automated-home-media-server)
