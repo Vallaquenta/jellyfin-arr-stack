@@ -1,10 +1,14 @@
 # Automated Home Media Server
+## Features
 A complete guide to setting up a home media server with automated requests/downloads
-This guide uses a lot of information from the [TRaSH Guides](https://trash-guides.info/). We will be using their:
-- File and folder structure
-- User setup and permissions
-- Quality profiles
-Of course you can adjust anything you'd like.
+we will set up the following flow:
+1. Allow users to request media via Seerr
+2. Looking up indexers/trackers/RSS feeds via Prowlarr
+3. Compare results to quality profiles imported via Configarr
+4. Select best matching result (ie. Bluray 1080p) and add to download client via Sonarr/Radarr
+5. Download movie/series via Qbittorrent/SABNZBD
+6. Automatically look up subtitles & synchronise them with Bazarr
+7. Move to Jellyfin library & add to Jellyfin
 
 ## Table of Contents
 - [Automated Home Media Server](#automated-home-media-server)
@@ -19,16 +23,7 @@ Of course you can adjust anything you'd like.
   - [User setup](#user-setup)
   - [File & Folder setup](#file--folder-setup)     
 
-# Features & The Stack
-This guide will help you setup the following flow:
-1. Allow users to request media via Seerr
-2. Looking up indexers/trackers/RSS feeds via Prowlarr
-3. Compare results to quality profiles imported via Configarr
-4. Select best matching result (ie. Bluray 1080p) and add to download client via Sonarr/Radarr
-5. Download movie/series via Qbittorrent/SABNZBD
-6. Automatically look up subtitles & synchronise them with Bazarr
-7. Move to Jellyfin library & add to Jellyfin
-
+# The Stack
 ## Core software
 **Docker** lets us run and isolate each of our services into a container. Everything for each of these services will live in the container except the configuration files which will live on our host.
 
