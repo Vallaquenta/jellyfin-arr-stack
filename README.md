@@ -1,5 +1,5 @@
 # Automated Home Media Server
-A complete guide to setting up a home media server with automated requests/downloads.
+A complete guide to setting up a home media server with automated requests/downloads
 This guide uses a lot of information from the [TRaSH Guides](https://trash-guides.info/). We will be using their:
 - File and folder structure
 - User setup and permissions
@@ -19,7 +19,16 @@ Of course you can adjust anything you'd like.
   - [User setup](#user-setup)
   - [File & Folder setup](#file--folder-setup)     
 
-# The Stack
+# Features & The Stack
+This guide will help you setup the following flow:
+1. Allow users to request media via Seerr
+2. Looking up indexers/trackers/RSS feeds via Prowlarr
+3. Compare results to quality profiles imported via Configarr
+4. Select best matching result (ie. Bluray 1080p) and add to download client via Sonarr/Radarr
+5. Download movie/series via Qbittorrent/SABNZBD
+6. Automatically look up subtitles & synchronise them with Bazarr
+7. Move to Jellyfin library & add to Jellyfin
+
 ## Core software
 **Docker** lets us run and isolate each of our services into a container. Everything for each of these services will live in the container except the configuration files which will live on our host.
 
@@ -31,11 +40,6 @@ Of course you can adjust anything you'd like.
 **SABNZBD** is a usenet client. Usenet has my personal preference over torrent clients due to more consistent quality, unless you're using private trackers.
 
 ## *arr Stack
-The *arr stack is full of apps that integrate with eachother very well. They will completely automate the process of:
-1. Allowing users to request media via Seerr
-2. Looking up indexers/trackers/RSS feeds
-3. Compare results to quality profiles imported via Configarr
-
 **[Sonarr](https://sonarr.tv/)** is a tool for automating and managing your TV library. It automates the process of searching for torrents, downloading them, and moving them to your library. It will also be able to check RSS feeds for information
 
 **[Radarr](https://radarr.video/)** is a fork of Sonarr that does all the same stuff but for Movies.
@@ -43,6 +47,8 @@ The *arr stack is full of apps that integrate with eachother very well. They wil
 **[Prowlarr](https://prowlarr.com/)** is a tool that Sonarr and Radarr use to search indexers and trackers for torrents and newsgroups.
 
 **FlareSolverr** can optionally be installed alongside Prowlarr to bypass cloudflare protections. Required for certain indexers (ex. 1337).
+
+**[Configarr](https://configarr.de/)** allows you to automatically synchronise quality profiles from TRaSH or create your own.
 
 **[Bazarr](https://www.bazarr.media/)** automatically downloads and synchronises subtitles in your preferred language.
 
@@ -71,41 +77,53 @@ sudo useradd sabnzbd -u 13002
 sudo useradd sonarr -u 13003
 sudo useradd radarr -u 13004
 sudo useradd prowlarr -u 13005
-sudo useradd bazarr -u 13006
-sudo useradd seerr -u 13007
-sudo useradd homepage -u 13008
-sudo useradd unmanic -u 13009
-sudo useradd npmplus -u 13010
+sudo useradd configarr -u 13006
+sudo useradd bazarr -u 13007
+sudo useradd seerr -u 13008
+sudo useradd homepage -u 13009
+sudo useradd unmanic -u 13010
+sudo useradd npmplus -u 13011
 sudo groupadd mediacenter -g 13000
 ```
 
-Then we want to add all users to the mediacenter
+Then we want to add all users to the mediacenter group:
+```
+sudo usermod -a -G mediacenter mediauser
+sudo usermod -a -G mediacenter qbittorrent
+sudo usermod -a -G mediacenter sabnzbd
+sudo usermod -a -G mediacenter sonarr
+sudo usermod -a -G mediacenter radarr
+sudo usermod -a -G mediacenter prowlarr
+sudo usermod -a -G mediacenter configarr
+sudo usermod -a -G mediacenter bazarr
+sudo usermod -a -G mediacenter seerr
+sudo usermod -a -G mediacenter homepage
+sudo usermod -a -G mediacenter unmanic
+sudo usermod -a -G mediacenter npmplus
+```
+## Configure mediauser
+Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
+Then we want to allow the `mediauser` to do sudo so do: `sudo adduser mediauser sudo`.
 
 ## File & Folder setup
-We are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), as well as using individual users for each Docker container.
-The folder structure will look something like: 
+We are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), the folder structure will look something like: 
 ```
 data
 ├── torrents
-│   ├── books
 │   ├── movies
-│   ├── music
 │   └── tv
 ├── usenet
 │   ├── incomplete
 │   └── complete
-│       ├── books
 │       ├── movies
-│       ├── music
 │       └── tv
 └── media
-    ├── books
     ├── movies
-    ├── music
     └── tv
 ```
 
-
+## 
+Make sure you're logged in as the user `mediauser` we've previously set up. 
 
 
 
