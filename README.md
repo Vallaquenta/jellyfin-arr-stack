@@ -63,7 +63,7 @@ This guide will help you setup the following flow:
 
 # Basic installation
 ## Docker & Docker compose
-You need to install [Docker](https://docs.docker.com/engine/install/) & [Docker Compose]([https://docs.docker.com/compose](https://docs.docker.com/compose/install/)) for your setup. Preferably use Docker Compose V2.
+You need to install [Docker](https://docs.docker.com/engine/install/) & [Docker Compose](https://docs.docker.com/compose/install/) for your setup. Preferably use Docker Compose V2.
 Both guides on the Docker website should be sufficient for you to install it.
 
 ## User & Group setup
@@ -106,8 +106,12 @@ Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. T
 Then we want to allow the `mediauser` to do sudo so do: `sudo adduser mediauser sudo`.
 
 ## File & Folder setup
-We are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), the folder structure will look something like: 
+For the file and folder structure, we are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), the folder structure will look something like: 
 ```
+config
+├── qbittorrent
+├── sabnznbd
+├── etc.
 data
 ├── torrents
 │   ├── movies
@@ -122,9 +126,25 @@ data
     └── tv
 ```
 
-## 
-Make sure you're logged in as the user `mediauser` we've previously set up. 
+## Creating Folders
+First we need to decide where you want the Docker containers and their config files to live. I would personally recommend either `/home` or `/opt`. In this guide we will be using `/home`.
+**Please note** if you're using an external NAS, you will have to edit your `/etc/fstab` first and permanently mount the volumes. Use that mountpoint for the /data/ folders. I would personally recommend keeping the config files and transcode cache on an SSD ([as per Jellyfin recommendations](https://jellyfin.org/docs/general/administration/hardware-selection#storage))
 
+Make sure you're logged in as the user `mediauser` we've previously set up by doing: `login mediauser`. Also make sure you are using bash for all commands to work.
+
+Create the folder structure by entering the following commands:
+```
+sudo mkdir -pv /home/config/{qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,unmanic,npmplus}
+sudo mkdir -pv /home/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /home/data/usenet/incomplete
+sudo mkdir -pv /home/data/usenet/complete/{movies,tv}
+```
+Please note that, if you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`, like:
+```
+sudo mkdir -pv /media/tank/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /media/tank/data/usenet/incomplete
+sudo mkdir -pv /media/tank/data/usenet/complete/{movies,tv}
+```
 
 
 
