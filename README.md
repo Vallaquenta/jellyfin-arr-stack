@@ -144,7 +144,25 @@ sudo mkdir -pv /media/tank/data/usenet/incomplete
 sudo mkdir -pv /media/tank/data/usenet/complete/{movies,tv}
 ```
 
-
+## Folder permissions
+```
+sudo chmod -R 775 /home/data/
+sudo chmod -R 775 /home/config/
+sudo chown -R mediauser:mediacenter /home/data/
+sudo chown -R mediauser:mediacenter /home/config/
+sudo chown -R mediauser:mediacenter /home/config/jellyfin
+sudo chown -R qbittorrent:mediacenter /home/config/qbittorrent
+sudo chown -R sabnzbd:mediacenter /home/config/sabnzbd
+sudo chown -R sonarr:mediacenter /home/config/sonarr
+sudo chown -R radarr:mediacenter /home/config/radarr
+sudo chown -R prowlarr:mediacenter /home/config/prowlarr
+sudo chown -R configarr:mediacenter /home/config/configarr
+sudo chown -R bazarr:mediacenter /home/config/bazarr
+sudo chown -R seerr:mediacenter /home/config/seerr
+sudo chown -R homepage:mediacenter /home/config/homepage
+sudo chown -R unmanic:mediacenter /home/config/unmanic
+sudo chown -R npmplus:mediacenter /home/config/npmplus
+```
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
