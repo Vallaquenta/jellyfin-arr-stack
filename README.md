@@ -60,8 +60,26 @@ The *arr stack is full of apps that integrate with eachother very well. They wil
 You need to install [Docker](https://docs.docker.com/engine/install/) & [Docker Compose]([https://docs.docker.com/compose](https://docs.docker.com/compose/install/)) for your setup. Preferably use Docker Compose V2.
 Both guides on the Docker website should be sufficient for you to install it.
 
-## User setup
+## User & Group setup
+An often overlooked part of the *arr stack is that it works best with individual users per app; that way you can give folder permissions (chown) only where they're needed. For our stack we will be starting our ID's for users at 13000. We will be be creating a new user called `Mediaserver` that we will use to create all folders and to run Docker Compose. 
 
+Run the following code to create all `users` and a usergroup for them; `mediacenter`
+```
+sudo useradd mediauser -u 13000
+sudo useradd qbittorrent -u 13001
+sudo useradd sabnzbd -u 13002
+sudo useradd sonarr -u 13003
+sudo useradd radarr -u 13004
+sudo useradd prowlarr -u 13005
+sudo useradd bazarr -u 13006
+sudo useradd seerr -u 13007
+sudo useradd homepage -u 13008
+sudo useradd unmanic -u 13009
+sudo useradd npmplus -u 13010
+sudo groupadd mediacenter -g 13000
+```
+
+Then we want to add all users to the mediacenter
 
 ## File & Folder setup
 We are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), as well as using individual users for each Docker container.
@@ -87,7 +105,10 @@ data
     └── tv
 ```
 
-You can run the following command to 
+
+
+
+
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
