@@ -7,8 +7,17 @@ This guide uses a lot of information from the [TRaSH Guides](https://trash-guide
 Of course you can adjust anything you'd like.
 
 ## Table of Contents
-[The Stack](#the-stack)  
-[Emphasis](#emphasis)   
+- [Automated Home Media Server](#automated-home-media-server)
+  - [Table of Contents](#table-of-contents)
+- [The Stack](#the-stack)
+  - [Core software](#core-software)
+  - [Downloading](#downloading)
+  - [*arr Stack](#arr-stack)
+  - [Optional software](#optional-software)
+- [Basic installation](#basic-installation)
+  - [Docker & Docker compose](#docker--docker-compose)
+  - [User setup](#user-setup)
+  - [File & Folder setup](#file--folder-setup)     
 
 # The Stack
 ## Core software
@@ -46,24 +55,39 @@ The *arr stack is full of apps that integrate with eachother very well. They wil
 ## Optional software
 **[NPMPlus](github.com/ZoeyVid/NPMplus/)** is an improved fork of nginx Proxy Manager; a webui that allows you to run reverse proxies with automatic TLS certificate creation and renewal via Let's Encrypt
 
-# Installing Docker & Docker Compose
+# Basic installation
+## Docker & Docker compose
+You need to install [Docker](https://docs.docker.com/engine/install/) & [Docker Compose]([https://docs.docker.com/compose](https://docs.docker.com/compose/install/)) for your setup. Preferably use Docker Compose V2.
+Both guides on the Docker website should be sufficient for you to install it.
+
+## User setup
 
 
-**Radarr:**
+## File & Folder setup
+We are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), as well as using individual users for each Docker container.
+The folder structure will look something like: 
+```
+data
+├── torrents
+│   ├── books
+│   ├── movies
+│   ├── music
+│   └── tv
+├── usenet
+│   ├── incomplete
+│   └── complete
+│       ├── books
+│       ├── movies
+│       ├── music
+│       └── tv
+└── media
+    ├── books
+    ├── movies
+    ├── music
+    └── tv
+```
 
-
-1. Navigate to Settings > Movies > Radarr
-2. Check "Enable" "V3" and "Scan for Availability"
-3. Enter hostname and port. If you followed this guide correctly it should just be localhost:7878
-4. Enter API key. You can find this in Radarr under Settings > General
-5. Leave base URL blank unless you configured one in Radarr
-6. Under Radarr Interface click on "Load Profiles" and "Load Root Folders"
-7. Select "Any" under Quality Profiles
-8. Select /movies under Default Root Folders
-9. Select Physical / Web under Default Minimum Availability. Optionally you could select and earlier setting in case a movie gets leaked before being released to DVD but you will more often than not probably just get cam recordings.
-
-# Advanced Configuration
-
+You can run the following command to 
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
