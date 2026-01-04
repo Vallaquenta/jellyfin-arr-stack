@@ -56,7 +56,7 @@ This guide will help you setup the following flow:
 
 **[Homepage](https://github.com/gethomepage/homepage)** is a dashboard for keeping track all of these web services
 
-**[Unmanic](https://docs.unmanic.app/)** is a great tool for optimising media files. For example, you can use it to remove unneccessary subtitles/audio tracks and transcode media to your desired format.
+**[Maintainarr](https://github.com/Maintainerr/Maintainerr)** is a great tool for removing media that hasn't been watched in a long while, or ones that were requested but never watched
 
 ## Optional software
 **[NPMPlus](github.com/ZoeyVid/NPMplus/)** is an improved fork of nginx Proxy Manager; a webui that allows you to run reverse proxies with automatic TLS certificate creation and renewal via Let's Encrypt
@@ -134,12 +134,13 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 
 Create the folder structure by entering the following commands:
 ```
-sudo mkdir -pv /home/config/{qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,unmanic,npmplus}
+sudo mkdir -pv /home/config/{qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,npmplus}
 sudo mkdir -pv /home/data/{torrents,media}/{movies,tv}
 sudo mkdir -pv /home/data/usenet/incomplete
 sudo mkdir -pv /home/data/usenet/complete/{movies,tv}
 ```
-Please note that, if you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`, like:
+### Other media location
+If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`, like:
 ```
 sudo mkdir -pv /media/tank/data/{torrents,media}/{movies,tv}
 sudo mkdir -pv /media/tank/data/usenet/incomplete
