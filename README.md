@@ -281,8 +281,18 @@ For indexers there are different types. There are 2 types you will want:
 - Torrent trackers
 - Newsgroup trackers
 For both there are a lot of different providers. If you're just starting out with downloading, it will be almost impossible to be a part of a Private Torrent tracker, as most of those are based on merits, e.g. how much you upload. Private newsgroup trackers usually provide access for a fee.
-- A good starting point for Newsgroup trackers is (https://www.reddit.com/r/usenet/).
-- A good starting point for Private torrent trackers is (https://www.reddit.com/r/OpenSignups/).
+- A good starting point for Newsgroup trackers is https://www.reddit.com/r/usenet/.
+- A good starting point for Private torrent trackers is https://www.reddit.com/r/OpenSignups/.
+
+## Configarr
+Configarr is a tool that will automatically synchronise quality lists from [TRaSH Guides](https://trash-guides.info/).
+I personally only watch 1080p content, so I sync the JSON files that correspond to this 'quality' only. There's a few steps to automatically synchronising quality profiles.
+1. Copy the [configuration file](/configarr-config.yml) for configarr to `/opt/mediaserver/config/configarr/config.yml`
+2. Create/copy the [secrets file](/configarr-secrets.yml) for configarr to `/opt/mediaserver/config/configarr/secrets.yml`
+3. Now it's time to dive into the deep end! I've only put in 2 basic quality formats:
+   - 1080p WEB for series
+   - 1080/720p Bluray/WEB for movies
+  You can find a lot of information for these quality profiles on the [TRaSH Guides](https://trash-guides.info/). All JSON files are located [here](https://github.com/TRaSH-Guides/Guides)
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
