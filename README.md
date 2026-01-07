@@ -85,7 +85,7 @@ sudo useradd maintainarr -u 13010
 sudo useradd unmanic -u 13011
 ```
 
-Then we want to add all users to the mediacenter group:
+Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
 ```
 sudo usermod -a -G mediacenter mediauser
 sudo usermod -a -G docker mediauser
@@ -105,8 +105,7 @@ sudo usermod -a -G mediacenter unmanic
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
 Then we want to allow the `mediauser` to do sudo so do: `sudo adduser mediauser sudo`.
 
-Now we want to create a home folder for the `mediauser`:
-`sudo mkhomedir_helper mediauser`
+Finally we want to create a home folder for the `mediauser`: `sudo mkhomedir_helper mediauser`
 
 ## File & Folder setup
 For the file and folder structure, we are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), the folder structure will look something like: 
@@ -171,7 +170,22 @@ sudo chown -R maintainarr:mediacenter /home/mediauser/config/maintainarr
 sudo chown -R unmanic:mediacenter /home/mediauser/config/unmanic
 ```
 
-Now that all file and folder permissions are set up we want to set up our docker compose file. This can be found in 
+## Docker Compose File
+Now that all file and folder permissions are set up we want to set up our docker compose file. This we will put in the default mediauser home folder `/home/mediauser` for ease of use. 
+
+# Application installation
+Launch all our Docker containers by doing `docker compose up -d`. It will now start pulling all images automatically. We will move on to configure every app individually
+
+## Qbittorrent
+Access the WebUI with the ports you've set up in the docker compose file we've created earlier. It will automatically create a password for you that you can access by doing `docker logs qbittorrent`. The output will have your password in it.
+<details>
+  <summary>Screenshot</summary>
+  ![Dockerlog](/assets/image/qbittorentlog.png)
+</details>
+![Dockerlog](/image/qbittorentlog.png)
+
+
+Change your default login details
 
 
 
