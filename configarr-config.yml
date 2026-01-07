@@ -23,7 +23,7 @@ sonarr:
 
 radarr:
   instance1:
-    base_url: http://radarr.local:8989
+    base_url: http://radarr.local:7878
     api_key: !secret RADARR_API_KEY
     
     delete_unmanaged_custom_formats:
