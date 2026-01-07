@@ -238,7 +238,7 @@ Set up the download clients by going to `Settings -> Download Clients -> + icon`
 Change the following settings based on personal preference.
 - Category to `tv` to be consistent across the board
 - Download in sequential order in order to prioritise the first episodes/movies
-- Client priority is set to lowest for me, since I prefer newsgroups
+- Client priority is set to 50 (lowest) for me, since I prefer newsgroups
 - Remove completed is unchecked for me since Prowlarr will have ratio's set up
 <details>
   <summary>Screenshots</summary>
@@ -253,7 +253,7 @@ You will need to set the following:
 - Obtain your API key from SABnzbd in `General Settings -> Security`
 - Optionally you can create a user account here for your SABnzbd setup (recommended)
 - Change port to 8081
-- 
+- Client priority to 1
 
 <details>
   <summary>Screenshots</summary>
@@ -277,6 +277,12 @@ We want to synchronise Prowlarr with Sonarr & Radarr. To do this go to `Settings
 </details>
 
 ### Indexer setup
+For indexers there are different types. There are 2 types you will want:
+- Torrent trackers
+- Newsgroup trackers
+For both there are a lot of different providers. If you're just starting out with downloading, it will be almost impossible to be a part of a Private Torrent tracker, as most of those are based on merits, e.g. how much you upload. Private newsgroup trackers usually provide access for a fee.
+- A good starting point for Newsgroup trackers is (https://www.reddit.com/r/usenet/).
+- A good starting point for Private torrent trackers is (https://www.reddit.com/r/OpenSignups/).
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
