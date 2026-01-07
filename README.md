@@ -219,6 +219,7 @@ Access the WebUI (default port 8081). Set up your news server, then in the user 
 Then we want to navigate to the categories tab and change our folder/paths for:
 - TV
 - Movies
+- And add a 'category' for Prowlarr, just in case
 <details>
   <summary>Screenshots</summary>
   
@@ -227,8 +228,8 @@ Then we want to navigate to the categories tab and change our folder/paths for:
 
 Further reading and information can be gotten from [TRaSH Guides' article on SABnzbd](https://trash-guides.info/Downloaders/SABnzbd/Basic-Setup/)
 
-## Sonarr & Radarr
-For Sonarr and Radarr setup will be almost identical. Access the WebUI (default port 8989 & 7878). Set up a user account that you want to login/edit with.
+## Sonarr, Radarr & Prowlarr
+For Sonarr, Radarr and Prowlarr setup will be almost identical. Access the WebUI (default port 8989, 7878 & 9696). Set up a user account that you want to login/edit with.
 
 ### Download clients
 Set up the download clients by going to `Settings -> Download Clients -> + icon`. Add both qBittorrent and SABnzbd here.
@@ -248,8 +249,11 @@ Change the following settings based on personal preference.
 </details>
 
 #### SABnzbd
-Obtain your API key from SABnzbd `General Settings -> Security`
-Optionally you can create a user account here for your SABnzbd setup (recommended)
+You will need to set the following:
+- Obtain your API key from SABnzbd in `General Settings -> Security`
+- Optionally you can create a user account here for your SABnzbd setup (recommended)
+- Change port to 8081
+- 
 
 <details>
   <summary>Screenshots</summary>
@@ -259,7 +263,20 @@ Optionally you can create a user account here for your SABnzbd setup (recommende
   ![Sonarr SABnzbd setup.](image/arrsabnzbd.png)
 </details>
 
-### 
+### Client sync
+We want to synchronise Prowlarr with Sonarr & Radarr. To do this go to `Settings -> Apps` in the Prowlarr settings. Then set the following values
+- Prowlarr server: `http://prowlarr.local:9696`
+- Sonarr server: `http://sonarr.local:8989`
+- API key: get this from your Sonarr/Radarr installation by navigating to `Settings -> General -> Security` (see screenshot)
+<details>
+  <summary>Screenshots</summary>
+
+  ![Where to find API key.](image/prowlarrapi.png)
+  
+  ![Prowlarr setup for sync.](image/prowlarrsync.png)
+</details>
+
+### Indexer setup
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
