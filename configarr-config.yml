@@ -2,6 +2,9 @@ trashGuideUrl: https://github.com/TRaSH-Guides/Guides
 
 sonarrEnabled: true
 radarrEnabled: true
+lidarrEnabled: false
+whisparrEnabled: false
+readarrEnabled: false
 
 sonarr:
   instance1:
