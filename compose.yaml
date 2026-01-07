@@ -1,0 +1,16 @@
+services:
+  qbittorrent:
+    container_name: qbittorrent
+    image: ghcr.io/hotio/qbittorrent
+    ports:
+      - "8080:8080"
+    environment:
+      - PUID=13001
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+      - WEBUI_PORTS=8080/tcp
+      - LIBTORRENT=v1
+    volumes:
+      - /home/config:/config
+      - /mnt/tank/torrents:/data
