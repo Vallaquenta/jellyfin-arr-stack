@@ -129,38 +129,42 @@ data
 ```
 
 ## Creating Folders
-First we need to decide where you want the Docker containers and their config files to live. I would personally recommend either `/home` or `/opt`. In this guide we will be using `/home`.
+First we need to decide where you want the Docker containers and their config files to live. I would personally recommend either `/opt`. In this guide we will be using `/opt` as base, where we will create a `mediaserver` folder.
 **Please note** if you're using an external NAS, you will have to edit your `/etc/fstab` first and permanently mount the volumes. Use that mountpoint for the /data/ folders. I would personally recommend keeping the config files and transcode cache on an SSD ([as per Jellyfin recommendations](https://jellyfin.org/docs/general/administration/hardware-selection#storage))
 
 Make sure you're logged in as the user `mediauser` we've previously set up by doing: `login mediauser`. Also make sure you are using `bash` for all commands to work.
 
 Create the folder structure by entering the following commands:
 ```
-sudo mkdir -pv /home/mediauser/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic}
-sudo mkdir -pv /home/mediauser/data/{torrents,media}/{movies,tv}
-sudo mkdir -pv /home/mediauser/data/usenet/incomplete
-sudo mkdir -pv /home/mediauser/data/usenet/complete/{movies,tv}
+sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic}
+sudo mkdir -pv /opt/mediaserver/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /opt/mediaserver/data/usenet/incomplete
+sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv}
 ```
 ### Other media location
 If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `tank` mounted in `mnt` here, while omitting the data folder.
 ```
-sudo mkdir -pv /mnt/tank/{torrents,media}/{movies,tv}
-sudo mkdir -pv /mnt/tank/usenet/incomplete
-sudo mkdir -pv /mnt/tank/usenet/complete/{movies,tv}
+sudo mkdir -pv /mnt/tank/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /mnt/tank/data/usenet/incomplete
+sudo mkdir -pv /mnt/tank/data/usenet/complete/{movies,tv}
 ```
 
 ## Folder permissions
-Remember to adjust the first line to your actual data location if you're using separate volumes/mountpoints
+Remember to adjust the lines that refer to your `data` location if you're not using `/home`
 ```
-sudo chmod -R 775 /home/mediauser/data/
+sudo chmod -R a=,a+rX,u+w,g+w /home/mediauser/data
 sudo chmod -R 775 /home/mediauser/config/
-sudo chown -R mediauser:mediacenter /home/mediauser/data/
+sudo chown -R mediauser:mediacenter /data/
 sudo chown -R mediauser:mediacenter /home/mediauser/config/
 sudo chown -R mediauser:mediacenter /home/mediauser/config/jellyfin
 sudo chown -R qbittorrent:mediacenter /home/mediauser/config/qbittorrent
+sudo chown -R qbittorrent:mediacenter /home/data/torrents
 sudo chown -R sabnzbd:mediacenter /home/mediauser/config/sabnzbd
+sudo chown -R sabnzbd:mediacenter /home/mediauser/data/usenet
 sudo chown -R sonarr:mediacenter /home/mediauser/config/sonarr
+sudo chown -R sonarr:mediacenter /home/mediauser/data/media/tv
 sudo chown -R radarr:mediacenter /home/mediauser/config/radarr
+sudo chown -R radarr:mediacenter /home/mediauser/data/media/movies
 sudo chown -R prowlarr:mediacenter /home/mediauser/config/prowlarr
 sudo chown -R configarr:mediacenter /home/mediauser/config/configarr
 sudo chown -R bazarr:mediacenter /home/mediauser/config/bazarr
@@ -237,7 +241,8 @@ Change the following settings based on personal preference.
 </details>
 
 #### SABnzbd
-Obtain your API key from SABnzbd `General Settings -> Security` optionally you can create a user account here for your SABnzbd setup (recommended)
+Obtain your API key from SABnzbd `General Settings -> Security`
+Optionally you can create a user account here for your SABnzbd setup (recommended)
 
 <details>
   <summary>Screenshots</summary>
@@ -247,7 +252,7 @@ Obtain your API key from SABnzbd `General Settings -> Security` optionally you c
   ![Sonarr SABnzbd setup.](image/arrsabnzbd.png)
 </details>
 
-
+### 
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
