@@ -1,0 +1,40 @@
+trashGuideUrl: https://github.com/TRaSH-Guides/Guides
+
+sonarrEnabled: true
+radarrEnabled: true
+
+sonarr:
+  instance1:
+    base_url: http://sonarr.local:8989
+    api_key: !secret SONARR_API_KEY
+
+    delete_unmanaged_custom_formats:
+      enabled: true
+
+    delete_unmanaged_quality_profiles:
+      enabled: true
+
+    quality_definition:
+      type: series
+
+    include:
+      - template: 72dae194fc92bf828f32cde7744e51a1
+        source: TRASH
+
+radarr:
+  instance1:
+    base_url: http://radarr.local:8989
+    api_key: !secret RADARR_API_KEY
+    
+    delete_unmanaged_custom_formats:
+      enabled: true
+
+    delete_unmanaged_quality_profiles:
+      enabled: true
+
+    quality_definition:
+      type: movies
+
+    include:
+      - template: d1d67249d3890e49bc12e275d989a7e9
+        source: TRASH
