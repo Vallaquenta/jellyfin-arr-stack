@@ -3,6 +3,7 @@ services:
   qbittorrent:
     image: ghcr.io/hotio/qbittorrent:latest
     container_name: qbittorrent
+    hostname: qbittorrent.local
     environment:
       - PUID=13001
       - PGID=13000
@@ -11,7 +12,7 @@ services:
       - WEBUI_PORT=8080/tcp
     volumes:
       - /home/mediauser/config/qbittorrent:/config
-      - /mnt/tank/torrents:/downloads
+      - /mnt/tank:/torrents
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8080:8080
@@ -20,6 +21,7 @@ services:
   sabnzbd:
     image: ghcr.io/hotio/sabnzbd:latest
     container_name: sabnzbd
+    hostname: sabnzbd.local
     environment:
       - PUID=13002
       - PGID=13000
@@ -28,29 +30,30 @@ services:
       - WEBUI_PORTS=8081/tcp
     volumes:
       - /home/mediauser/config/sabnzbd:/config
-      - /mnt/tank/usenet/incomplete:/incomplete-downloads
-      - /mnt/tank/usenet/complete:/downloads
+      - /mnt/tank:/usenet
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - 8081:8080
+      - 8081:8081
     restart: unless-stopped
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: ghcr.io/hotio/sonarr:latest
     container_name: sonarr
+    hostname: sonarr.local
     environment:
       - PUID=13003
       - PGID=13000
-      - TZ=/etc/timezone
+      - UMASK=002
+      - TZ=Europe/Amsterdam
     volumes:
       - /home/mediauser/config/sonarr:/config
-      - /mnt/tank/media/tv:/tv
+      - /mnt/tank:/tv
+      - /etc/localtime:/etc/localtime:ro      
     ports:
       - 8989:8989
     restart: unless-stopped
+    
 
-
-sudo useradd radarr -u 13004
 sudo useradd prowlarr -u 13005
 sudo useradd configarr -u 13006
 sudo useradd bazarr -u 13007
