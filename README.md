@@ -66,11 +66,11 @@ You need to install [Docker](https://docs.docker.com/engine/install/) & [Docker 
 Both guides on the Docker website should be sufficient for you to install it.
 
 ## User & Group setup
-An often overlooked part of the *arr stack is that it works best with individual users per app; that way you can give folder permissions (chown) only where they're needed. For our stack we will be starting our ID's for users at 13000. We will be be creating a new user called `Mediaserver` that we will use to create all folders and to run Docker Compose. 
+An often overlooked part of the *arr stack is that it works best with individual users per app; that way you can give folder permissions (chown) only where they're needed. For our stack we will be starting our ID's for users at 13000. We will be be creating a new user called `mediauser` that we will use to create all folders and to run Docker Compose. Ideally we don't want to run this as root, for security purposes
 
 Run the following code to create all `users` and a usergroup for them; `mediacenter`
 ```
-sudo groupadd mediacenter -g 13000
+sudo groupadd mediaserver -g 13000
 sudo useradd mediauser -u 13000
 sudo useradd qbittorrent -u 13001
 sudo useradd sabnzbd -u 13002
@@ -87,19 +87,19 @@ sudo useradd unmanic -u 13011
 
 Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
 ```
-sudo usermod -a -G mediacenter mediauser
+sudo usermod -a -G mediaserver mediauser
 sudo usermod -a -G docker mediauser
-sudo usermod -a -G mediacenter qbittorrent
-sudo usermod -a -G mediacenter sabnzbd
-sudo usermod -a -G mediacenter sonarr
-sudo usermod -a -G mediacenter radarr
-sudo usermod -a -G mediacenter prowlarr
-sudo usermod -a -G mediacenter configarr
-sudo usermod -a -G mediacenter bazarr
-sudo usermod -a -G mediacenter seerr
-sudo usermod -a -G mediacenter homepage
-sudo usermod -a -G mediacenter maintainarr
-sudo usermod -a -G mediacenter unmanic
+sudo usermod -a -G mediaserver qbittorrent
+sudo usermod -a -G mediaserver sabnzbd
+sudo usermod -a -G mediaserver sonarr
+sudo usermod -a -G mediaserver radarr
+sudo usermod -a -G mediaserver prowlarr
+sudo usermod -a -G mediaserver configarr
+sudo usermod -a -G mediaserver bazarr
+sudo usermod -a -G mediaserver seerr
+sudo usermod -a -G mediaserver homepage
+sudo usermod -a -G mediaserver maintainarr
+sudo usermod -a -G mediaserver unmanic
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
@@ -142,36 +142,36 @@ sudo mkdir -pv /opt/mediaserver/data/usenet/incomplete
 sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv}
 ```
 ### Other media location
-If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `tank` mounted in `mnt` here, while omitting the data folder.
+If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `media` mounted in `mnt` here, while omitting the data folder.
 ```
-sudo mkdir -pv /mnt/tank/data/{torrents,media}/{movies,tv}
-sudo mkdir -pv /mnt/tank/data/usenet/incomplete
-sudo mkdir -pv /mnt/tank/data/usenet/complete/{movies,tv}
+sudo mkdir -pv /mnt/media/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /mnt/media/data/usenet/incomplete
+sudo mkdir -pv /mnt/media/data/usenet/complete/{movies,tv}
 ```
 
 ## Folder permissions
 Remember to adjust the lines that refer to your `data` location if you're not using `/home`
 ```
-sudo chmod -R a=,a+rX,u+w,g+w /home/mediauser/data
-sudo chmod -R 775 /home/mediauser/config/
-sudo chown -R mediauser:mediacenter /data/
-sudo chown -R mediauser:mediacenter /home/mediauser/config/
-sudo chown -R mediauser:mediacenter /home/mediauser/config/jellyfin
-sudo chown -R qbittorrent:mediacenter /home/mediauser/config/qbittorrent
-sudo chown -R qbittorrent:mediacenter /home/data/torrents
-sudo chown -R sabnzbd:mediacenter /home/mediauser/config/sabnzbd
-sudo chown -R sabnzbd:mediacenter /home/mediauser/data/usenet
-sudo chown -R sonarr:mediacenter /home/mediauser/config/sonarr
-sudo chown -R sonarr:mediacenter /home/mediauser/data/media/tv
-sudo chown -R radarr:mediacenter /home/mediauser/config/radarr
-sudo chown -R radarr:mediacenter /home/mediauser/data/media/movies
-sudo chown -R prowlarr:mediacenter /home/mediauser/config/prowlarr
-sudo chown -R configarr:mediacenter /home/mediauser/config/configarr
-sudo chown -R bazarr:mediacenter /home/mediauser/config/bazarr
-sudo chown -R seerr:mediacenter /home/mediauser/config/seerr
-sudo chown -R homepage:mediacenter /home/mediauser/config/homepage
-sudo chown -R maintainarr:mediacenter /home/mediauser/config/maintainarr
-sudo chown -R unmanic:mediacenter /home/mediauser/config/unmanic
+sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver/data
+sudo chmod -R 775 /opt/mediaserver/config/
+sudo chown -R mediauser:mediaserver /opt/mediaserver/data/
+sudo chown -R mediauser:mediaserver /opt/mediaserver/config/
+sudo chown -R mediauser:mediaserver /opt/mediaserver/config/jellyfin
+sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
+sudo chown -R qbittorrent:mediaserver /opt/mediaserver/data/torrents
+sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
+sudo chown -R sabnzbd:mediaserver /opt/mediaserver/data/usenet
+sudo chown -R sonarr:mediaserver /opt/mediaserver/config/sonarr
+sudo chown -R sonarr:mediaserver /opt/mediaserver/data/media/tv
+sudo chown -R radarr:mediaserver /opt/mediaserver/config/radarr
+sudo chown -R radarr:mediaserver /opt/mediaserver/data/media/movies
+sudo chown -R prowlarr:mediaserver /opt/mediaserver/config/prowlarr
+sudo chown -R configarr:mediaserver /opt/mediaserver/config/configarr
+sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
+sudo chown -R seerr:mediaserver /opt/mediaserver/config/seerr
+sudo chown -R homepage:mediaserver /opt/mediaserver/config/homepage
+sudo chown -R maintainarr:mediaserver /opt/mediaserver/config/maintainarr
+sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
 ```
 
 ## Docker Compose File
