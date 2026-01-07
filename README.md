@@ -107,6 +107,8 @@ Then we want to allow the `mediauser` to do sudo so do: `sudo adduser mediauser 
 
 Finally we want to create a home folder for the `mediauser`: `sudo mkhomedir_helper mediauser`
 
+Now reboot your machine.
+
 ## File & Folder setup
 For the file and folder structure, we are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), the folder structure will look something like: 
 ```
@@ -152,19 +154,16 @@ sudo mkdir -pv /mnt/media/data/usenet/complete/{movies,tv}
 ## Folder permissions
 Remember to adjust the lines that refer to your `data` location if you're not using `/home`
 ```
-sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver/data
-sudo chmod -R 775 /opt/mediaserver/config/
-sudo chown -R mediauser:mediaserver /opt/mediaserver/data/
-sudo chown -R mediauser:mediaserver /opt/mediaserver/config/
-sudo chown -R mediauser:mediaserver /opt/mediaserver/config/jellyfin
+sudo chown -R $USER:$USER /mnt/media/data
+sudo chown -R $USER:$USER /opt/mediaserver
+sudo chmod -R a=,a+rX,u+w,g+w /mnt/media/data
+sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
-sudo chown -R qbittorrent:mediaserver /opt/mediaserver/data/torrents
+sudo chown -R qbittorrent:mediaserver /mnt/media/data/torrents
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
-sudo chown -R sabnzbd:mediaserver /opt/mediaserver/data/usenet
+sudo chown -R sabnzbd:mediaserver /mnt/media/data/usenet
 sudo chown -R sonarr:mediaserver /opt/mediaserver/config/sonarr
-sudo chown -R sonarr:mediaserver /opt/mediaserver/data/media/tv
 sudo chown -R radarr:mediaserver /opt/mediaserver/config/radarr
-sudo chown -R radarr:mediaserver /opt/mediaserver/data/media/movies
 sudo chown -R prowlarr:mediaserver /opt/mediaserver/config/prowlarr
 sudo chown -R configarr:mediaserver /opt/mediaserver/config/configarr
 sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
@@ -175,7 +174,8 @@ sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
 ```
 
 ## Docker Compose File
-Now that all file and folder permissions are set up we want to set up our docker compose file. This we will put in the default mediauser home folder `/home/mediauser` for ease of use. 
+Now that all file and folder permissions are set up we want to set up our docker compose file. The location for this file will be in our home folder `/home/mediauser` for ease of use.
+Just do `nano compose.yaml` and copy and past the contents of [this file](/compose.yaml)
 
 # Application installation
 Launch all our Docker containers by doing `docker compose up -d`. It will now start pulling all images automatically. We will move on to configure every app individually
@@ -210,12 +210,21 @@ These are the default settings to make qBittorrent work. If you want more detail
 
 ## SABnzbd
 Access the WebUI (default port 8081). Set up your news server, then in the user folders:
-* Set your temporary download folder to `/incomplete-downloads`
-* Set your completed download folder to `/downloads`
+- Set your temporary download folder to `/data/usenet/incomplete`
+- Set your completed download folder to `/data/usenet/complete`
 <details>
   <summary>Screenshots</summary>
   
   ![SABnzbd folder setup.](image/sabnzbdfolders.png)
+</details>
+
+Then we want to navigate to the categories tab and change our folder/paths for:
+- TV
+- Movies
+<details>
+  <summary>Screenshots</summary>
+  
+  ![SABnzbd folder setup.](image/sabnzbdcategories.png)
 </details>
 
 Further reading and information can be gotten from [TRaSH Guides' article on SABnzbd](https://trash-guides.info/Downloaders/SABnzbd/Basic-Setup/)
