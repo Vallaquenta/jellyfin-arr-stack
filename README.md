@@ -49,11 +49,13 @@ we will set up the following flow:
 
 **[Bazarr](https://www.bazarr.media/)** automatically downloads and synchronises subtitles in your preferred language.
 
-**[Seerr](https://github.com/Fallenbagel/jellyseerr)** is a fork of Overseerr that's now merging codebase with Jellyseerr itself to automate
+**[Seerr](https://github.com/seerr-team/seerr)** allows users to request media and automatically add it to Radarr/Sonarr.
 
-**[Homepage](https://github.com/gethomepage/homepage)** is a dashboard for keeping track all of these web services
+**[Homepage](https://github.com/gethomepage/homepage)** is a dashboard for keeping track all of the services we're running.
 
-**[Maintainarr](https://github.com/Maintainerr/Maintainerr)** is a great tool for removing media that hasn't been watched in a long while, or ones that were requested but never watched
+**[Maintainarr](https://github.com/Maintainerr/Maintainerr)** is a great tool for removing media that hasn't been watched in a long while, or ones that were requested but never watched.
+
+**[Unmanic](https://docs.unmanic.app/docs/)** is a tool to organise your library and remove unused subtitles and other things.
 
 ## Optional software
 **[NPMPlus](https://github.com/ZoeyVid/NPMplus/)** is an improved fork of nginx Proxy Manager; a webui that allows you to run reverse proxies with automatic TLS certificate creation and renewal via Let's Encrypt
@@ -68,6 +70,7 @@ An often overlooked part of the *arr stack is that it works best with individual
 
 Run the following code to create all `users` and a usergroup for them; `mediacenter`
 ```
+sudo groupadd mediacenter -g 13000
 sudo useradd mediauser -u 13000
 sudo useradd qbittorrent -u 13001
 sudo useradd sabnzbd -u 13002
@@ -78,14 +81,14 @@ sudo useradd configarr -u 13006
 sudo useradd bazarr -u 13007
 sudo useradd seerr -u 13008
 sudo useradd homepage -u 13009
-sudo useradd unmanic -u 13010
-sudo useradd npmplus -u 13011
-sudo groupadd mediacenter -g 13000
+sudo useradd maintainarr -u 13010
+sudo useradd unmanic -u 13011
 ```
 
 Then we want to add all users to the mediacenter group:
 ```
 sudo usermod -a -G mediacenter mediauser
+sudo usermod -a -G docker mediauser
 sudo usermod -a -G mediacenter qbittorrent
 sudo usermod -a -G mediacenter sabnzbd
 sudo usermod -a -G mediacenter sonarr
@@ -95,12 +98,15 @@ sudo usermod -a -G mediacenter configarr
 sudo usermod -a -G mediacenter bazarr
 sudo usermod -a -G mediacenter seerr
 sudo usermod -a -G mediacenter homepage
+sudo usermod -a -G mediacenter maintainarr
 sudo usermod -a -G mediacenter unmanic
-sudo usermod -a -G mediacenter npmplus
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
 Then we want to allow the `mediauser` to do sudo so do: `sudo adduser mediauser sudo`.
+
+Now we want to create a home folder for the `mediauser`:
+`sudo mkhomedir_helper mediauser`
 
 ## File & Folder setup
 For the file and folder structure, we are using [TRaSH Guides' setup on file & folder structure](https://trash-guides.info/File-and-Folder-Structure/), the folder structure will look something like: 
@@ -127,42 +133,47 @@ data
 First we need to decide where you want the Docker containers and their config files to live. I would personally recommend either `/home` or `/opt`. In this guide we will be using `/home`.
 **Please note** if you're using an external NAS, you will have to edit your `/etc/fstab` first and permanently mount the volumes. Use that mountpoint for the /data/ folders. I would personally recommend keeping the config files and transcode cache on an SSD ([as per Jellyfin recommendations](https://jellyfin.org/docs/general/administration/hardware-selection#storage))
 
-Make sure you're logged in as the user `mediauser` we've previously set up by doing: `login mediauser`. Also make sure you are using bash for all commands to work.
+Make sure you're logged in as the user `mediauser` we've previously set up by doing: `login mediauser`. Also make sure you are using `bash` for all commands to work.
 
 Create the folder structure by entering the following commands:
 ```
-sudo mkdir -pv /home/config/{qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,npmplus}
-sudo mkdir -pv /home/data/{torrents,media}/{movies,tv}
-sudo mkdir -pv /home/data/usenet/incomplete
-sudo mkdir -pv /home/data/usenet/complete/{movies,tv}
+sudo mkdir -pv /home/mediauser/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic}
+sudo mkdir -pv /home/mediauser/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /home/mediauser/data/usenet/incomplete
+sudo mkdir -pv /home/mediauser/data/usenet/complete/{movies,tv}
 ```
 ### Other media location
-If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`, like:
+If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `tank` mounted in `mnt` here, while omitting the data folder.
 ```
-sudo mkdir -pv /media/tank/data/{torrents,media}/{movies,tv}
-sudo mkdir -pv /media/tank/data/usenet/incomplete
-sudo mkdir -pv /media/tank/data/usenet/complete/{movies,tv}
+sudo mkdir -pv /mnt/tank/{torrents,media}/{movies,tv}
+sudo mkdir -pv /mnt/tank/usenet/incomplete
+sudo mkdir -pv /mnt/tank/usenet/complete/{movies,tv}
 ```
 
 ## Folder permissions
+Remember to adjust the first line to your actual data location if you're using separate volumes/mountpoints
 ```
-sudo chmod -R 775 /home/data/
-sudo chmod -R 775 /home/config/
-sudo chown -R mediauser:mediacenter /home/data/
-sudo chown -R mediauser:mediacenter /home/config/
-sudo chown -R mediauser:mediacenter /home/config/jellyfin
-sudo chown -R qbittorrent:mediacenter /home/config/qbittorrent
-sudo chown -R sabnzbd:mediacenter /home/config/sabnzbd
-sudo chown -R sonarr:mediacenter /home/config/sonarr
-sudo chown -R radarr:mediacenter /home/config/radarr
-sudo chown -R prowlarr:mediacenter /home/config/prowlarr
-sudo chown -R configarr:mediacenter /home/config/configarr
-sudo chown -R bazarr:mediacenter /home/config/bazarr
-sudo chown -R seerr:mediacenter /home/config/seerr
-sudo chown -R homepage:mediacenter /home/config/homepage
-sudo chown -R unmanic:mediacenter /home/config/unmanic
-sudo chown -R npmplus:mediacenter /home/config/npmplus
+sudo chmod -R 775 /home/mediauser/data/
+sudo chmod -R 775 /home/mediauser/config/
+sudo chown -R mediauser:mediacenter /home/mediauser/data/
+sudo chown -R mediauser:mediacenter /home/mediauser/config/
+sudo chown -R mediauser:mediacenter /home/mediauser/config/jellyfin
+sudo chown -R qbittorrent:mediacenter /home/mediauser/config/qbittorrent
+sudo chown -R sabnzbd:mediacenter /home/mediauser/config/sabnzbd
+sudo chown -R sonarr:mediacenter /home/mediauser/config/sonarr
+sudo chown -R radarr:mediacenter /home/mediauser/config/radarr
+sudo chown -R prowlarr:mediacenter /home/mediauser/config/prowlarr
+sudo chown -R configarr:mediacenter /home/mediauser/config/configarr
+sudo chown -R bazarr:mediacenter /home/mediauser/config/bazarr
+sudo chown -R seerr:mediacenter /home/mediauser/config/seerr
+sudo chown -R homepage:mediacenter /home/mediauser/config/homepage
+sudo chown -R maintainarr:mediacenter /home/mediauser/config/maintainarr
+sudo chown -R unmanic:mediacenter /home/mediauser/config/unmanic
 ```
+
+Now that all file and folder permissions are set up we want to set up our docker compose file. This can be found in 
+
+
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
