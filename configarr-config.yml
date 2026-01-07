@@ -18,7 +18,7 @@ sonarr:
       type: series
 
     include:
-      - template: 72dae194fc92bf828f32cde7744e51a1
+      - template: 9d142234e45d6143785ac55f5a9e8dc9
         source: TRASH
 
 radarr:
