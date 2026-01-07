@@ -289,7 +289,8 @@ Configarr is a tool that will automatically synchronise quality lists from [TRaS
 I personally only watch 1080p content, so I sync the JSON files that correspond to this 'quality' only. There's a few steps to automatically synchronising quality profiles.
 1. Copy the [configuration file](/configarr-config.yml) for configarr to `/opt/mediaserver/config/configarr/config.yml`
 2. Create/copy the [secrets file](/configarr-secrets.yml) for configarr to `/opt/mediaserver/config/configarr/secrets.yml`
-3. Now it's time to dive into the deep end! I've only put in 2 basic quality formats:
+   Be sure to adjust the keys with your [API keys](#client-sync)
+4. Now it's time to dive into the deep end! I've only put in 2 basic quality formats:
    - 1080p WEB for series
    - 1080/720p Bluray/WEB for movies
   You can find a lot of information for these quality profiles on the [TRaSH Guides](https://trash-guides.info/). All JSON files are located [here](https://github.com/TRaSH-Guides/Guides)
