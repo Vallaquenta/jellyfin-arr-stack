@@ -241,8 +241,10 @@ Obtain your API key from SABnzbd `General Settings -> Security` optionally you c
 
 <details>
   <summary>Screenshots</summary>
+
+  ![Sonarr SABnzbd setup.](image/sabnzbdapi.png)
   
-  ![Sonarr SABnzbd setup.](image/sonarrsabnzbd.png)
+  ![Sonarr SABnzbd setup.](image/arrsabnzbd.png)
 </details>
 
 
