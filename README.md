@@ -43,8 +43,6 @@ we will set up the following flow:
 
 **[Prowlarr](https://prowlarr.com/)** is a tool that Sonarr and Radarr use to search indexers and trackers for torrents and newsgroups.
 
-**FlareSolverr** can optionally be installed alongside Prowlarr to bypass cloudflare protections. Required for certain indexers (ex. 1337).
-
 **[Configarr](https://configarr.de/)** allows you to automatically synchronise quality profiles from TRaSH or create your own.
 
 **[Bazarr](https://www.bazarr.media/)** automatically downloads and synchronises subtitles in your preferred language.
@@ -152,18 +150,18 @@ sudo mkdir -pv /mnt/media/data/usenet/complete/{movies,tv}
 ```
 
 ## Folder permissions
-Remember to adjust the lines that refer to your `data` location if you're not using `/home`
+Remember to adjust the lines that refer to your `data` location if you're not using the default location of `/opt/mediaserver`
 ```
-sudo chown -R $USER:$USER /mnt/media/data
-sudo chown -R $USER:$USER /opt/mediaserver
-sudo chmod -R a=,a+rX,u+w,g+w /mnt/media/data
 sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
+sudo chown -R $USER:$USER /opt/mediaserver
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
-sudo chown -R qbittorrent:mediaserver /mnt/media/data/torrents
+sudo chown -R qbittorrent:mediaserver /opt/mediaserver/data/torrents
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
-sudo chown -R sabnzbd:mediaserver /mnt/media/data/usenet
+sudo chown -R sabnzbd:mediaserver /opt/mediaserver/data/usenet
 sudo chown -R sonarr:mediaserver /opt/mediaserver/config/sonarr
+sudo chown -R sonarr:mediaserver /opt/mediaserver/data/tv
 sudo chown -R radarr:mediaserver /opt/mediaserver/config/radarr
+sudo chown -R radarr:mediaserver /opt/mediaserver/data/movies
 sudo chown -R prowlarr:mediaserver /opt/mediaserver/config/prowlarr
 sudo chown -R configarr:mediaserver /opt/mediaserver/config/configarr
 sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
