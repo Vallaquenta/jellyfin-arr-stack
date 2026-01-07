@@ -180,12 +180,15 @@ Launch all our Docker containers by doing `docker compose up -d`. It will now st
 Access the WebUI with the ports you've set up in the docker compose file we've created earlier. It will automatically create a password for you that you can access by doing `docker logs qbittorrent`. The output will have your password in it.
 <details>
   <summary>Screenshot</summary>
-  ![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](https://myoctocat.com/assets/images/base-octocat.svg)
+  
+  ![Docker log for Qbittorrent.](image/qbittorrentlog.png)
 </details>
-![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](https://myoctocat.com/assets/images/base-octocat.svg)
-
-
-Change your default login details
+Change your default login details. For security sake, change both the admin login and the password.
+<details>
+  <summary>Screenshot</summary>
+  
+  ![Docker log for Qbittorrent.](image/qbittorrentadmin.png)
+</details>
 
 
 
