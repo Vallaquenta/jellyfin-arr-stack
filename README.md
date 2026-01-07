@@ -183,17 +183,37 @@ Access the WebUI (default port 8080). It will automatically create a password fo
   
   ![Docker log for qBittorrent.](image/qbittorrentlog.png)
 </details>
+
+### Admin Account
 Change your default login details. For security sake, change both the admin login and the password. Optionally you can allow `bypass authentication for local clients` or setup whitelisted IPs. 
 <details>
   <summary>Screenshot</summary>
   
-  ![Docker log for qBittorrent.](image/qbittorrentadmin.png)
+  ![qBittorrent Admin tab setup.](image/qbittorrentadmin.png)
 </details>
 
-After setting up the basics, follow the [TRaSH guide](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/) for setting up everything right in qBittorrent.
+### Downloading setup
+Set up the Downloads tab with the following options
+* Do not enable pre-allocating disk space when you're using unRaid with a cache drive
+* Change details as you want, but these settings minimise disk IO since qBittorrent doesn't support atomic moves
+<details>
+  <summary>Screenshot</summary>
+  
+  ![qBittorrent Downloads tab setup.](image/qbittorrentdownloads.png)
+</details>
+
+These are the default settings to make qBittorrent work. If you want more detailed information, I highly recommend visiting [TRaSH Guides' section on qBittorrent](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/).
 
 ## SABNZBD
-Access the WebUI (default port 8081). 
+Access the WebUI (default port 8081). Set up your news server, then in the user folders:
+* Set your temporary download folder to `/incomplete-downloads`
+* Set your completed download folder to `/downloads`
+<details>
+  <summary>Screenshot</summary>
+  
+  ![SABNZBD folder setup.](image/sabnzbdfolders.png)
+</details>
+
 
 
 **NPMPlus + Crowdsec**
