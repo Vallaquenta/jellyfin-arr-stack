@@ -1,16 +1,30 @@
+---
 services:
   qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
-    image: ghcr.io/hotio/qbittorrent
-    ports:
-      - "8080:8080"
     environment:
       - PUID=13001
       - PGID=13000
-      - UMASK=002
       - TZ=Europe/Amsterdam
-      - WEBUI_PORTS=8080/tcp
-      - LIBTORRENT=v1
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881 # Change this port to a random number between 1024 & 65535, also apply this to the ports below
     volumes:
-      - /home/config:/config
-      - /mnt/tank/torrents:/data
+      - /home/mediauser/config/qbittorrent:/config
+      - /mnt/tank/torrents:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+
+#sudo usermod -a -G mediacenter sabnzbd
+#sudo usermod -a -G mediacenter sonarr
+#sudo usermod -a -G mediacenter radarr
+#sudo usermod -a -G mediacenter prowlarr
+#sudo usermod -a -G mediacenter configarr
+#sudo usermod -a -G mediacenter bazarr
+#sudo usermod -a -G mediacenter seerr
+#sudo usermod -a -G mediacenter homepage
+#sudo usermod -a -G mediacenter maintainarr
+#sudo usermod -a -G mediacenter unmanic
