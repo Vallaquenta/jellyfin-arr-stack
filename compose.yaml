@@ -12,7 +12,7 @@ services:
       - WEBUI_PORT=8080/tcp
     volumes:
       - /opt/mediaserver/config/qbittorrent:/config
-      - /mnt/media/data:/torrents
+      - /mnt/media/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8080:8080
@@ -30,10 +30,10 @@ services:
       - WEBUI_PORTS=8081/tcp
     volumes:
       - /opt/mediaserver/config/sabnzbd:/config
-      - /mnt/media/data:/usenet
+      - /mnt/media/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - 8081:8081sudo chown -R $USER:$USER /data
+      - 8081:8081
     restart: unless-stopped
 
   sonarr:
@@ -47,7 +47,7 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - /opt/mediaserver/config/sonarr:/config
-      - /mnt/media/data:/tv
+      - /mnt/media/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8989:8989
