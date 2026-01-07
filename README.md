@@ -176,20 +176,24 @@ Now that all file and folder permissions are set up we want to set up our docker
 # Application installation
 Launch all our Docker containers by doing `docker compose up -d`. It will now start pulling all images automatically. We will move on to configure every app individually
 
-## Qbittorrent
-Access the WebUI with the ports you've set up in the docker compose file we've created earlier. It will automatically create a password for you that you can access by doing `docker logs qbittorrent`. The output will have your password in it.
+## qBittorrent
+Access the WebUI (default port 8080). It will automatically create a password for you that you can access by doing `docker logs qbittorrent`. The output will have your password in it.
 <details>
   <summary>Screenshot</summary>
   
-  ![Docker log for Qbittorrent.](image/qbittorrentlog.png)
+  ![Docker log for qBittorrent.](image/qbittorrentlog.png)
 </details>
-Change your default login details. For security sake, change both the admin login and the password.
+Change your default login details. For security sake, change both the admin login and the password. Optionally you can allow `bypass authentication for local clients` or setup whitelisted IPs. 
 <details>
   <summary>Screenshot</summary>
   
-  ![Docker log for Qbittorrent.](image/qbittorrentadmin.png)
+  ![Docker log for qBittorrent.](image/qbittorrentadmin.png)
 </details>
 
+After setting up the basics, follow the [TRaSH guide](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/) for setting up everything right in qBittorrent.
+
+## SABNZBD
+Access the WebUI (default port 8081). 
 
 
 **NPMPlus + Crowdsec**
