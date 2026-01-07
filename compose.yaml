@@ -17,7 +17,6 @@ services:
     ports:
       - 8080:8080
     restart: unless-stopped
-
   sabnzbd:
     image: ghcr.io/hotio/sabnzbd:latest
     container_name: sabnzbd
@@ -35,7 +34,6 @@ services:
     ports:
       - 8081:8081
     restart: unless-stopped
-
   sonarr:
     image: ghcr.io/hotio/sonarr:latest
     container_name: sonarr
@@ -52,12 +50,138 @@ services:
     ports:
       - 8989:8989
     restart: unless-stopped
-    
-
-sudo useradd prowlarr -u 13005
-sudo useradd configarr -u 13006
-sudo useradd bazarr -u 13007
-sudo useradd seerr -u 13008
-sudo useradd homepage -u 13009
-sudo useradd maintainarr -u 13010
-sudo useradd unmanic -u 13011
+  radarr:
+    image: ghcr.io/hotio/radarr:latest
+    container_name: radarr
+    hostname: radarr.local
+    environment:
+      - PUID=13004
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/radarr:/config
+      - /mnt/media/data:/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:latest
+    container_name: prowlarr
+    hostname: prowlarr.local
+    environment:
+      - PUID=13005
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/prowlarr:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+  configarr:
+    image: ghcr.io/raydak-labs/configarr:latest
+    container_name: configarr
+    hostname: configarr.local
+    environment:
+      - PUID=13006
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/configarr:/config
+      - /etc/localtime:/etc/localtime:ro
+  bazarr:
+    image: ghcr.io/hotio/bazarr:latest
+    container_name: bazarr
+    hostname: bazarr.local
+    environment:
+      - PUID=13007
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/bazarr:/config
+      - /mnt/media/data:/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+  seerr:
+    image: ghcr.io/hotio/seerr:latest
+    container_name: seerr
+    hostname: seerr.local
+    environment:
+      - PUID=13008
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/seerr:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    hostname: homepage.local
+    environment:
+      - PUID=13009
+      - PGID=13000
+      - HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/homepage:/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+  maintainerr:
+    image: ghcr.io/maintainerr/maintainerr:latest
+    container_name: maintainerr
+    hostname: maintainerr.local
+    environment:
+      - PUID=13010
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/maintainarr:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 6246:6246
+    restart: unless-stopped
+  unmanic:
+    image: ghcr.io/maintainerr/maintainerr:latest
+    container_name: unmanic
+    hostname: unmanic.local
+    environment:
+      - PUID=13011
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/unmanic:/config
+      - /mnt/media/data:/library
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8888:8888
+    restart: unless-stopped
+  jellyfin:
+    container_name: jellyfin
+    image: ghcr.io/hotio/jellyfin
+    hostname: jellyfin.local
+    ports:
+      - 8096:8096
+    environment:
+      - PUID=13000
+      - PGID=13000
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /opt/mediaserver/config/jellyfin:/config
+      - /mnt/media/data:/data
