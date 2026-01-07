@@ -14,6 +14,7 @@ we will set up the following flow:
 
 ## Table of Contents
 - [Automated Home Media Server](#automated-home-media-server)
+  - [Features](#features)
   - [Table of Contents](#table-of-contents)
 - [The Stack](#the-stack)
   - [Core software](#core-software)
@@ -22,8 +23,17 @@ we will set up the following flow:
   - [Optional software](#optional-software)
 - [Basic installation](#basic-installation)
   - [Docker & Docker compose](#docker--docker-compose)
-  - [User setup](#user-setup)
-  - [File & Folder setup](#file--folder-setup)     
+  - [User & Group setup](#user--group-setup)
+  - [Configure mediauser](#configure-mediauser)
+  - [File & Folder setup](#file--folder-setup)
+  - [Creating Folders](#creating-folders)
+  - [Folder permissions](#folder-permissions)
+  - [Docker Compose File](#docker-compose-file)
+- [Application installation](#application-installation)
+  - [qBittorrent](#qbittorrent)
+  - [SABnzbd](#sabnzbd)
+  - [Sonarr, Radarr & Prowlarr](#sonarr-radarr--prowlarr)
+  - [Configarr](#configarr)
 
 # The Stack
 ## Core software
@@ -290,10 +300,13 @@ I personally only watch 1080p content, so I sync the JSON files that correspond 
 1. Copy the [configuration file](/configarr-config.yml) for configarr to `/opt/mediaserver/config/configarr/config.yml`
 2. Create/copy the [secrets file](/configarr-secrets.yml) for configarr to `/opt/mediaserver/config/configarr/secrets.yml`
    Be sure to adjust the keys with your [API keys](#client-sync)
-4. Now it's time to dive into the deep end! I've only put in 2 basic quality formats:
+3. Now it's time to dive into the deep end! I've only put in 2 basic quality formats:
    - 1080p WEB for series
    - 1080/720p Bluray/WEB for movies
-  You can find a lot of information for these quality profiles on the [TRaSH Guides](https://trash-guides.info/). All JSON files are located [here](https://github.com/TRaSH-Guides/Guides)
+4. You can find a lot of information for these quality profiles on the [TRaSH Guides](https://trash-guides.info/) website. The location/ID for quality profiles can be found either there, or by browsing the Github
+   - https://github.com/TRaSH-Guides/Guides/tree/master/docs/json/sonarr/quality-profiles
+   - https://github.com/TRaSH-Guides/Guides/tree/master/docs/json/radarr/quality-profiles
+5. 
 
 **NPMPlus + Crowdsec**
 Use the following whitelist:
