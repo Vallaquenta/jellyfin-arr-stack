@@ -6,7 +6,7 @@ we will set up the following flow:
 2. Looking up indexers/trackers/RSS feeds via Prowlarr
 3. Compare results to quality profiles imported via Configarr
 4. Select best matching result (ie. Bluray 1080p) and add to download client via Sonarr/Radarr
-5. Download movie/series via Qbittorrent/SABNZBD
+5. Download movie/series via Qbittorrent/SABnzbd
 6. Automatically look up subtitles & synchronise them with Bazarr
 7. Move to Jellyfin library & add to Jellyfin
 8. Give public access to Jellyfin with a secure reverse proxy via NPMplus + Crowdsec
@@ -34,7 +34,7 @@ we will set up the following flow:
 ## Downloading
 **qBittorrent** is a torrent client. Transmission and Deluge are also popular choices but I chose qBittorrent because you can easily configure it to only operate over the VPN connection.
 
-**SABNZBD** is a usenet client. Usenet has my personal preference over torrent clients due to more consistent quality, unless you're using private trackers.
+**SABnzbd** is a usenet client. Usenet has my personal preference over torrent clients due to more consistent quality, unless you're using private trackers.
 
 ## *arr Stack
 **[Sonarr](https://sonarr.tv/)** is a tool for automating and managing your TV library. It automates the process of searching for torrents, downloading them, and moving them to your library. It will also be able to check RSS feeds for information
@@ -187,7 +187,7 @@ Access the WebUI (default port 8080). It will automatically create a password fo
 ### Admin Account
 Change your default login details. For security sake, change both the admin login and the password. Optionally you can allow `bypass authentication for local clients` or setup whitelisted IPs. 
 <details>
-  <summary>Screenshot</summary>
+  <summary>Screenshots</summary>
   
   ![qBittorrent Admin tab setup.](image/qbittorrentadmin.png)
 </details>
@@ -197,21 +197,52 @@ Set up the Downloads tab with the following options
 * Do not enable pre-allocating disk space when you're using unRaid with a cache drive
 * Change details as you want, but these settings minimise disk IO since qBittorrent doesn't support atomic moves
 <details>
-  <summary>Screenshot</summary>
+  <summary>Screenshots</summary>
   
   ![qBittorrent Downloads tab setup.](image/qbittorrentdownloads.png)
 </details>
 
 These are the default settings to make qBittorrent work. If you want more detailed information, I highly recommend visiting [TRaSH Guides' section on qBittorrent](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/).
 
-## SABNZBD
+## SABnzbd
 Access the WebUI (default port 8081). Set up your news server, then in the user folders:
 * Set your temporary download folder to `/incomplete-downloads`
 * Set your completed download folder to `/downloads`
 <details>
-  <summary>Screenshot</summary>
+  <summary>Screenshots</summary>
   
-  ![SABNZBD folder setup.](image/sabnzbdfolders.png)
+  ![SABnzbd folder setup.](image/sabnzbdfolders.png)
+</details>
+
+Further reading and information can be gotten from [TRaSH Guides' article on SABnzbd](https://trash-guides.info/Downloaders/SABnzbd/Basic-Setup/)
+
+## Sonarr & Radarr
+For Sonarr and Radarr setup will be almost identical. Access the WebUI (default port 8989 & 7878). Set up a user account that you want to login/edit with.
+
+### Download clients
+Set up the download clients by going to `Settings -> Download Clients -> + icon`. Add both qBittorrent and SABnzbd here.
+
+#### Qbittorrent
+Change the following settings based on personal preference.
+- Category to `tv` to be consistent across the board
+- Download in sequential order in order to prioritise the first episodes/movies
+- Client priority is set to lowest for me, since I prefer newsgroups
+- Remove completed is unchecked for me since Prowlarr will have ratio's set up
+<details>
+  <summary>Screenshots</summary>
+  
+  ![Sonarr SABnzbd setup.](image/arrqbittorrent.png)
+
+  ![Sonarr SABnzbd setup.](image/arrqbittorrent2.png)
+</details>
+
+#### SABnzbd
+- Obtain your API key from the SABnzbd `General Settings -> Security` optionally you can create a user account here for your SABnzbd setup (recommended)
+- 
+<details>
+  <summary>Screenshots</summary>
+  
+  ![Sonarr SABnzbd setup.](image/sonarrsabnzbd.png)
 </details>
 
 
