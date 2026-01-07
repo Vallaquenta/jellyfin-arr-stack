@@ -237,8 +237,8 @@ Change the following settings based on personal preference.
 </details>
 
 #### SABnzbd
-- Obtain your API key from the SABnzbd `General Settings -> Security` optionally you can create a user account here for your SABnzbd setup (recommended)
-- 
+Obtain your API key from SABnzbd `General Settings -> Security` optionally you can create a user account here for your SABnzbd setup (recommended)
+
 <details>
   <summary>Screenshots</summary>
   
