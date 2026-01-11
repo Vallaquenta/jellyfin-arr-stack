@@ -304,20 +304,5 @@ I personally only watch 1080p content, so I sync the JSON files that correspond 
    - 1080p WEB for series
    - 1080/720p Bluray/WEB for movies
 4. You can find a lot of information for these quality profiles on the [TRaSH Guides](https://trash-guides.info/) website. The location/ID for quality profiles can be found either there, or by browsing the Github
-   - https://github.com/TRaSH-Guides/Guides/tree/master/docs/json/sonarr/quality-profiles
-   - https://github.com/TRaSH-Guides/Guides/tree/master/docs/json/radarr/quality-profiles
-5. 
-
-**NPMPlus + Crowdsec**
-Use the following whitelist:
-```
-name: crowdsecurity/jellyfin-whitelist
-description: "Whitelist events from jellyfin"
-filter: "evt.Meta.service == 'http' && evt.Meta.log_type in ['http_access-log', 'http_error-log']"
-whitelist:
-  reason: "Jellyfin whitelist"
-  expression:
-   - evt.Meta.http_status == '403' && evt.Meta.http_verb == 'POST' && evt.Meta.http_path matches '^/Sessions/Playing/Progress$' # When playing videos
-   - evt.Meta.http_status == '404' && evt.Meta.http_verb == 'GET' && evt.Meta.http_path matches '(?i)^/items/([a-z0-9\\-]+)/images/(thumb|primary)' # When brow>
-   - evt.Meta.http_verb == 'GET' && evt.Meta.http_path contains '/HomeScreen/CachedImage/' # When using Custom Home Sections plugin with Jellyseerr integration
-```
+   - [Sonarr Quality Profiles](https://github.com/TRaSH-Guides/Guides/tree/master/docs/json/sonarr/quality-profiles)
+   - [Radarr Quality Profiles](https://github.com/TRaSH-Guides/Guides/tree/master/docs/json/radarr/quality-profiles)
