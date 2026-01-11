@@ -206,8 +206,9 @@ Change your default login details. For security sake, change both the admin logi
 
 ### Downloading setup
 Set up the Downloads tab with the following options
-* Do not enable pre-allocating disk space when you're using unRaid with a cache drive
-* Change details as you want, but these settings minimise disk IO since qBittorrent doesn't support atomic moves
+- Do not enable pre-allocating disk space when you're using unRaid with a cache drive
+- Change details as you want, but these settings minimise disk IO since qBittorrent doesn't support atomic moves
+- Do not not use the *Incomplete Downloads* folder
 <details>
   <summary>Screenshots</summary>
   
