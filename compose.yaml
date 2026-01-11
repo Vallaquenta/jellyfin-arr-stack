@@ -185,3 +185,4 @@ services:
     volumes:
       - /opt/mediaserver/config/jellyfin:/config
       - /mnt/media/data:/data
+    restart: unless-stopped
