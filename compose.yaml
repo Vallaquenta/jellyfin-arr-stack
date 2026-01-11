@@ -12,7 +12,7 @@ services:
       - WEBUI_PORT=8080/tcp
     volumes:
       - /opt/mediaserver/config/qbittorrent:/config
-      - /mnt/media/data:/data
+      - /opt/mediaserver/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8080:8080
@@ -29,7 +29,7 @@ services:
       - WEBUI_PORTS=8081/tcp
     volumes:
       - /opt/mediaserver/config/sabnzbd:/config
-      - /mnt/media/data:/data
+      - /opt/mediaserver/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8081:8081
@@ -45,7 +45,7 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - /opt/mediaserver/config/sonarr:/config
-      - /mnt/media/data:/data
+      - /opt/mediaserver/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8989:8989
@@ -61,7 +61,7 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - /opt/mediaserver/config/radarr:/config
-      - /mnt/media/data:/data
+      - /opt/mediaserver/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 7878:7878
@@ -104,7 +104,7 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - /opt/mediaserver/config/bazarr:/config
-      - /mnt/media/data:/data
+      - /opt/mediaserver/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 6767:6767
@@ -166,7 +166,7 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - /opt/mediaserver/config/unmanic:/config
-      - /mnt/media/data:/library
+      - /opt/mediaserver/data:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8888:8888
@@ -184,5 +184,5 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - /opt/mediaserver/config/jellyfin:/config
-      - /mnt/media/data:/data
+      - /opt/mediaserver/data:/data
     restart: unless-stopped
