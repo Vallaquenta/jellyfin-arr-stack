@@ -91,6 +91,7 @@ sudo useradd seerr -u 13008
 sudo useradd homepage -u 13009
 sudo useradd maintainarr -u 13010
 sudo useradd unmanic -u 13011
+sudo useradd calibre -u 13012
 ```
 
 Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
@@ -108,6 +109,7 @@ sudo usermod -a -G mediaserver seerr
 sudo usermod -a -G mediaserver homepage
 sudo usermod -a -G mediaserver maintainarr
 sudo usermod -a -G mediaserver unmanic
+sudo usermod -a -G mediaserver calibre
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
@@ -128,14 +130,17 @@ data
 ├── torrents
 │   ├── movies
 │   └── tv
+│   └── books
 ├── usenet
 │   ├── incomplete
 │   └── complete
 │       ├── movies
 │       └── tv
+│       └── books
 └── media
     ├── movies
     └── tv
+    └── books
 ```
 
 ## Creating Folders
@@ -146,17 +151,17 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 
 Create the folder structure by entering the following commands:
 ```
-sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic}
-sudo mkdir -pv /opt/mediaserver/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic,calibre}
+sudo mkdir -pv /opt/mediaserver/data/{torrents,media}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/usenet/incomplete
-sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv}
+sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv,books}
 ```
 ### Other media location
 If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `media` mounted in `mnt` here, while omitting the data folder.
 ```
-sudo mkdir -pv /mnt/media/data/{torrents,media}/{movies,tv}
+sudo mkdir -pv /mnt/media/data/{torrents,media}/{movies,tv,books}
 sudo mkdir -pv /mnt/media/data/usenet/incomplete
-sudo mkdir -pv /mnt/media/data/usenet/complete/{movies,tv}
+sudo mkdir -pv /mnt/media/data/usenet/complete/{movies,tv,books}
 ```
 
 ## Folder permissions
@@ -179,6 +184,8 @@ sudo chown -R seerr:mediaserver /opt/mediaserver/config/seerr
 sudo chown -R homepage:mediaserver /opt/mediaserver/config/homepage
 sudo chown -R maintainarr:mediaserver /opt/mediaserver/config/maintainarr
 sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
+sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
+sudo chown -R calibre:mediaserver /opt/mediaserver/data/books
 ```
 
 ## Docker Compose File
