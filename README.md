@@ -92,6 +92,8 @@ sudo useradd homepage -u 13009
 sudo useradd maintainarr -u 13010
 sudo useradd unmanic -u 13011
 sudo useradd calibre -u 13012
+sudo useradd gluetun -u 13013
+sudo useradd shelfmark -u 13014
 ```
 
 Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
@@ -110,6 +112,8 @@ sudo usermod -a -G mediaserver homepage
 sudo usermod -a -G mediaserver maintainarr
 sudo usermod -a -G mediaserver unmanic
 sudo usermod -a -G mediaserver calibre
+sudo usermod -a -G mediaserver gluetun
+sudo usermod -a -G mediaserver shelfmark
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
@@ -151,7 +155,7 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 
 Create the folder structure by entering the following commands:
 ```
-sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic,calibre}
+sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic,calibre,gluetun,shelfmark}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/usenet/incomplete
 sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv,books}
@@ -186,6 +190,8 @@ sudo chown -R maintainarr:mediaserver /opt/mediaserver/config/maintainarr
 sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
 sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
 sudo chown -R calibre:mediaserver /opt/mediaserver/data/books
+sudo chown -R gluetun:mediaserver /opt/mediaserver/config/gluetun
+sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
 ```
 
 ## Docker Compose File
