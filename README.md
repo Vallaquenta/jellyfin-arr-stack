@@ -157,6 +157,7 @@ Create the folder structure by entering the following commands:
 ```
 sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic,calibre,gluetun,shelfmark}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media}/{movies,tv,books}
+sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
 sudo mkdir -pv /opt/mediaserver/data/usenet/incomplete
 sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv,books}
 ```
@@ -191,6 +192,7 @@ sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
 sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
 sudo chown -R calibre:mediaserver /opt/mediaserver/data/books
 sudo chown -R gluetun:mediaserver /opt/mediaserver/config/gluetun
+sudo chown -R shelfmark:mediaserver /opt/mediaserver/data/media/books/ingest
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
 ```
 
