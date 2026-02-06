@@ -162,7 +162,7 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 Create the folder structure by entering the following commands:
 ```
 sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd}
-sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,configarr,calibre,shelfmark,qbittorrent,sabnzbd}
+sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,configarr,calibre,}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
 ```
@@ -176,7 +176,6 @@ sudo mkdir -pv /mnt/media/data/{torrents,media,usenet}/{movies,tv,books}
 Remember to adjust the lines that refer to your `data` location if you're not using the default location of `/opt/mediaserver`
 ```
 sudo chown -R $USER:$USER /opt/mediaserver
-sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 sudo chown -R caddy:mediaserver /opt/mediaserver/config/caddy
 sudo chown -R caddy:mediaserver /opt/mediaserver/application/caddy
 sudo chown -R gluetun:mediaserver /opt/mediaserver/config/gluetun
@@ -196,9 +195,14 @@ sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
 sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
 sudo chown -R calibre:mediaserver /opt/mediaserver/application/calibre
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
-sudo chown -R shelfmark:mediaserver /opt/mediaserver/application/shelfmark
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
+sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
+```
+
+If you're using an external mount point to store all large media files, also chmod those.
+```
+sudo chmod -R a=,a+rX,u+w,g+w /mnt/media/data
 ```
 
 ## Docker Compose File
