@@ -159,12 +159,13 @@ First we need to decide where you want the Docker containers and their config fi
 
 Make sure you're logged in as the user `mediauser` we've previously set up by doing: `login mediauser`. Also make sure you are using `bash` for all commands to work.
 
-Create the folder structure by entering the following commands:
+Create the folder structure and the Caddyfile by entering the following commands:
 ```
 sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd}
 sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,configarr,calibre,}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
+sudo touch /opt/mediaserver/application/caddy/Caddyfile
 ```
 ### Other media location
 If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `media` mounted in `mnt` here, while omitting the data folder.
