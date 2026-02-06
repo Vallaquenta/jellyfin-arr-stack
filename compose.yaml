@@ -46,7 +46,7 @@ services:
       - ROOT_DOMAIN=${ROOT_DOMAIN}
     volumes:
       - ${APPLICATION_FOLDER}/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ${APPLICATION_FOLDER}/caddy:/data                     
+      - ${APPLICATION_FOLDER}/caddy:/data
       - ${CONFIG_FOLDER}/caddy:/config
       - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy
     restart: unless-stopped
@@ -69,10 +69,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
-  voidauth: 
-    build:
-      context: .
-      target: serve
+  voidauth:
     image: voidauth/voidauth:latest
     container_name: voidauth
     ports:
@@ -93,7 +90,6 @@ services:
 
   voidauth-db:
     image: postgres:18
-    container_name: voidauth-db
     environment:
       - PUID=13005
       - PGID=${PGID}
