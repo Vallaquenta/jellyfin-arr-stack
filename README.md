@@ -80,40 +80,44 @@ Run the following code to create all `users` and a usergroup for them; `mediacen
 ```
 sudo groupadd mediaserver -g 13000
 sudo useradd mediauser -u 13000
-sudo useradd qbittorrent -u 13001
-sudo useradd sabnzbd -u 13002
-sudo useradd sonarr -u 13003
-sudo useradd radarr -u 13004
-sudo useradd prowlarr -u 13005
-sudo useradd configarr -u 13006
-sudo useradd bazarr -u 13007
-sudo useradd seerr -u 13008
-sudo useradd homepage -u 13009
-sudo useradd maintainarr -u 13010
-sudo useradd unmanic -u 13011
-sudo useradd calibre -u 13012
-sudo useradd gluetun -u 13013
+sudo useradd caddy -u 13001
+sudo useradd gluetun -u 13002
+sudo useradd crowdsec -u 13003
+sudo useradd tailscale -u 13004
+sudo useradd voidauth -u 13005
+sudo useradd jellyfin -u 13006
+sudo useradd seerr -u 13007
+sudo useradd sonarr -u 13008
+sudo useradd radarr -u 13009
+sudo useradd prowlarr -u 13010
+sudo useradd configarr -u 13011
+sudo useradd bazarr -u 13012
+sudo useradd calibre -u 13013
 sudo useradd shelfmark -u 13014
+sudo useradd qbittorrent -u 13015
+sudo useradd sabnzbd -u 13016
 ```
 
 Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
 ```
 sudo usermod -a -G mediaserver mediauser
 sudo usermod -a -G docker mediauser
-sudo usermod -a -G mediaserver qbittorrent
-sudo usermod -a -G mediaserver sabnzbd
+sudo usermod -a -G mediaserver caddy
+sudo usermod -a -G mediaserver gluetun
+sudo usermod -a -G mediaserver crowdsec
+sudo usermod -a -G mediaserver tailscale
+sudo usermod -a -G mediaserver voidauth
+sudo usermod -a -G mediaserver jellyfin
+sudo usermod -a -G mediaserver seerr
 sudo usermod -a -G mediaserver sonarr
 sudo usermod -a -G mediaserver radarr
 sudo usermod -a -G mediaserver prowlarr
 sudo usermod -a -G mediaserver configarr
 sudo usermod -a -G mediaserver bazarr
-sudo usermod -a -G mediaserver seerr
-sudo usermod -a -G mediaserver homepage
-sudo usermod -a -G mediaserver maintainarr
-sudo usermod -a -G mediaserver unmanic
 sudo usermod -a -G mediaserver calibre
-sudo usermod -a -G mediaserver gluetun
 sudo usermod -a -G mediaserver shelfmark
+sudo usermod -a -G mediaserver qbittorrent
+sudo usermod -a -G mediaserver sabnzbd
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
@@ -130,17 +134,19 @@ config
 ├── qbittorrent
 ├── sabnznbd
 ├── etc.
+application
+├── qbittorrent
+├── sabnznbd
+├── etc.
 data
 ├── torrents
 │   ├── movies
 │   └── tv
 │   └── books
 ├── usenet
-│   ├── incomplete
-│   └── complete
-│       ├── movies
-│       └── tv
-│       └── books
+│   ├── movies
+│   └── tv
+│   └── books
 └── media
     ├── movies
     └── tv
@@ -148,52 +154,51 @@ data
 ```
 
 ## Creating Folders
-First we need to decide where you want the Docker containers and their config files to live. I would personally recommend either `/opt`. In this guide we will be using `/opt` as base, where we will create a `mediaserver` folder.
+First we need to decide where you want the Docker containers and their config files to live. I would personally recommend `/opt`. In this guide we will be using `/opt` as base, where we will create a `mediaserver` folder.
 **Please note** if you're using an external NAS, you will have to edit your `/etc/fstab` first and permanently mount the volumes. Use that mountpoint for the /data/ folders. I would personally recommend keeping the config files and transcode cache on an SSD ([as per Jellyfin recommendations](https://jellyfin.org/docs/general/administration/hardware-selection#storage))
 
 Make sure you're logged in as the user `mediauser` we've previously set up by doing: `login mediauser`. Also make sure you are using `bash` for all commands to work.
 
 Create the folder structure by entering the following commands:
 ```
-sudo mkdir -pv /opt/mediaserver/config/{jellyfin,qbittorrent,sabnzbd,sonarr,radarr,prowlarr,configarr,bazarr,seerr,homepage,maintainarr,unmanic,calibre,gluetun,shelfmark}
-sudo mkdir -pv /opt/mediaserver/data/{torrents,media}/{movies,tv,books}
+sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd}
+sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,configarr,calibre,shelfmark,qbittorrent,sabnzbd}
+sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
-sudo mkdir -pv /opt/mediaserver/data/usenet/incomplete
-sudo mkdir -pv /opt/mediaserver/data/usenet/complete/{movies,tv,books}
 ```
 ### Other media location
 If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `media` mounted in `mnt` here, while omitting the data folder.
 ```
-sudo mkdir -pv /mnt/media/data/{torrents,media}/{movies,tv,books}
-sudo mkdir -pv /mnt/media/data/usenet/incomplete
-sudo mkdir -pv /mnt/media/data/usenet/complete/{movies,tv,books}
+sudo mkdir -pv /mnt/media/data/{torrents,media,usenet}/{movies,tv,books}
 ```
 
 ## Folder permissions
 Remember to adjust the lines that refer to your `data` location if you're not using the default location of `/opt/mediaserver`
 ```
-sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 sudo chown -R $USER:$USER /opt/mediaserver
-sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
-sudo chown -R qbittorrent:mediaserver /opt/mediaserver/data/torrents
-sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
-sudo chown -R sabnzbd:mediaserver /opt/mediaserver/data/usenet
+sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
+sudo chown -R caddy:mediaserver /opt/mediaserver/config/caddy
+sudo chown -R caddy:mediaserver /opt/mediaserver/application/caddy
+sudo chown -R gluetun:mediaserver /opt/mediaserver/config/gluetun
+sudo chown -R crowdsec:mediaserver /opt/mediaserver/config/crowdsec
+sudo chown -R crowdsec:mediaserver /opt/mediaserver/application/crowdsec
+sudo chown -R voidauth:mediaserver /opt/mediaserver/config/voidauth
+sudo chown -R voidauth:mediaserver /opt/mediaserver/application/voidauth
+sudo chown -R jellyfin:mediaserver /opt/mediaserver/config/jellyfin
+sudo chown -R jellyfin:mediaserver /opt/mediaserver/application/jellyfin
+sudo chown -R seerr:mediaserver /opt/mediaserver/config/seerr
 sudo chown -R sonarr:mediaserver /opt/mediaserver/config/sonarr
-sudo chown -R sonarr:mediaserver /opt/mediaserver/data/tv
 sudo chown -R radarr:mediaserver /opt/mediaserver/config/radarr
-sudo chown -R radarr:mediaserver /opt/mediaserver/data/movies
 sudo chown -R prowlarr:mediaserver /opt/mediaserver/config/prowlarr
 sudo chown -R configarr:mediaserver /opt/mediaserver/config/configarr
+sudo chown -R configarr:mediaserver /opt/mediaserver/application/configarr
 sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
-sudo chown -R seerr:mediaserver /opt/mediaserver/config/seerr
-sudo chown -R homepage:mediaserver /opt/mediaserver/config/homepage
-sudo chown -R maintainarr:mediaserver /opt/mediaserver/config/maintainarr
-sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
 sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
-sudo chown -R calibre:mediaserver /opt/mediaserver/data/books
-sudo chown -R gluetun:mediaserver /opt/mediaserver/config/gluetun
-sudo chown -R shelfmark:mediaserver /opt/mediaserver/data/media/books/ingest
+sudo chown -R calibre:mediaserver /opt/mediaserver/application/calibre
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
+sudo chown -R shelfmark:mediaserver /opt/mediaserver/application/shelfmark
+sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
+sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
 ```
 
 ## Docker Compose File
