@@ -72,6 +72,7 @@ services:
   voidauth:
     image: voidauth/voidauth:latest
     container_name: voidauth
+    hostname: voidauth
     ports:
       - 3000:3000
     environment:
@@ -79,7 +80,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - APP_URL=${APP_URL}
-      - DB_HOST=voidauth-db
+      - DB_ADAPTER=sqlite
       - DB_PASSWORD=${DB_PASSWORD}
       - STORAGE_KEY=${STORAGE_KEY}
     volumes:
@@ -88,24 +89,9 @@ services:
       voidauth-db:
         condition: service_healthy
 
-  voidauth-db:
-    image: postgres:18
-    environment:
-      - PUID=13005
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    ports:
-      - 5432:5432
-    volumes:
-      - ${APPLICATION_FOLDER}/voidauth:/var/lib/postgresql/18/docker
-    restart: unless-stopped
-    healthcheck:
-      test: "pg_isready -U postgres -h localhost"
-
   jellyfin:
-    container_name: jellyfin
     image: ghcr.io/hotio/jellyfin
+    container_name: jellyfin
     hostname: jellyfin.local
     ports:
       - 8096:8096
@@ -123,7 +109,7 @@ services:
   seerr:
     image: ghcr.io/hotio/seerr:latest
     container_name: seerr
-    hostname: seerr.local
+    hostname: seerr
     environment:
       - PUID=13007
       - PGID=${PGID}
@@ -138,7 +124,7 @@ services:
   sonarr:
     image: ghcr.io/hotio/sonarr:latest
     container_name: sonarr
-    hostname: sonarr.local
+    hostname: sonarr
     environment:
       - PUID=13008
       - PGID=${PGID}
@@ -154,7 +140,7 @@ services:
   radarr:
     image: ghcr.io/hotio/radarr:latest
     container_name: radarr
-    hostname: radarr.local
+    hostname: radarr
     environment:
       - PUID=13009
       - PGID=${PGID}
@@ -170,7 +156,7 @@ services:
   prowlarr:
     image: ghcr.io/hotio/prowlarr:latest
     container_name: prowlarr
-    hostname: prowlarr.local
+    hostname: prowlarr
     environment:
       - PUID=13010
       - PGID=${PGID}
@@ -185,7 +171,7 @@ services:
   configarr:
     image: ghcr.io/raydak-labs/configarr:latest
     container_name: configarr
-    hostname: configarr.local
+    hostname: configarr
     environment:
       - PUID=13011
       - PGID=${PGID}
@@ -200,7 +186,7 @@ services:
   bazarr:
     image: ghcr.io/hotio/bazarr:latest
     container_name: bazarr
-    hostname: bazarr.local
+    hostname: bazarr
     environment:
       - PUID=13012
       - PGID=${PGID}
@@ -237,6 +223,7 @@ services:
   shelfmark:
     image: ghcr.io/calibrain/shelfmark:dev
     container_name: shelfmark
+    hostname: shelfmark
     environment:
       - PUID=13014
       - PGID=${PGID}
@@ -253,6 +240,7 @@ services:
   seedboxapi:
     image: myanonamouse/seedboxapi
     container_name: seedboxapi
+    # can't use hostname with network_mode
     network_mode: service:gluetun
     environment:
       - PUID=13015
@@ -266,6 +254,7 @@ services:
   qbittorrent:
     image: ghcr.io/hotio/qbittorrent:latest
     container_name: qbittorrent
+    # can't use hostname with network_mode
     network_mode: service:gluetun
     depends_on:
       gluetun:
