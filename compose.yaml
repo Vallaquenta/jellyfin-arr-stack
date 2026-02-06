@@ -1,176 +1,112 @@
 ---
 services:
-  qbittorrent:
-    image: ghcr.io/hotio/qbittorrent:latest
-    container_name: qbittorrent
-    hostname: qbittorrent.local
+# Run gluetun first so it can set up the connection
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+    - NET_ADMIN
+    devices:
+    - /dev/net/tun:/dev/net/tun
+    volumes:
+    - ${CONFIG_FOLDER}/gluetun:/gluetun
+    environment:
+    - PUID=13002
+    - PGID=${PGID}
+    - TZ=${TZ}
+    - UPDATER_PERIOD=24h
+    - VPN_SERVICE_PROVIDER=protonvpn
+    - VPN_TYPE=wireguard
+    - BLOCK_MALICIOUS=off
+    - OPENVPN_USER=${OPENVPN_USER}
+    - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
+    - OPENVPN_CIPHERS=AES-256-GCM
+    - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+    - PORT_FORWARD_ONLY=on
+    - VPN_PORT_FORWARDING=on
+    - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http>
+    - SERVER_COUNTRIES=Netherlands
+    ports:
+    # Open ports 8080 locally so you can access Qbittorrent webinterface
+    - 8080:8080
+
+  caddy:
+    image: serfriz/caddy-cloudflare-ddns-crowdsec:latest
+    container_name: caddy
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
     environment:
       - PUID=13001
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-      - WEBUI_PORT=8080/tcp
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CROWDSEC_API_KEY=${CROWDSEC_API_KEY}
+      - ROOT_DOMAIN=${ROOT_DOMAIN}
     volumes:
-      - /opt/mediaserver/config/qbittorrent:/config
-      - /opt/mediaserver/data:/data
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 8080:8080
+      - ${APPLICATION_FOLDER}/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${APPLICATION_FOLDER}/caddy:/data                     
+      - ${CONFIG_FOLDER}/caddy:/config
+      - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy
     restart: unless-stopped
-  sabnzbd:
-    image: ghcr.io/hotio/sabnzbd:latest
-    container_name: sabnzbd
-    hostname: sabnzbd.local
-    environment:
-      - PUID=13002
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-      - WEBUI_PORTS=8081/tcp
-    volumes:
-      - /opt/mediaserver/config/sabnzbd:/config
-      - /opt/mediaserver/data:/data
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 8081:8081
-    restart: unless-stopped
-  sonarr:
-    image: ghcr.io/hotio/sonarr:latest
-    container_name: sonarr
-    hostname: sonarr.local
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    hostname: crowdsec
     environment:
       - PUID=13003
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/linux firix/authentik
     volumes:
-      - /opt/mediaserver/config/sonarr:/config
-      - /opt/mediaserver/data:/data
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 8989:8989
+      - ${CONFIG_FOLDER}/crowdsec:/etc/crowdsec:rw
+      - ${APPLICATION_FOLDER}/crowdsec/acquis/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy:ro
+      - ${APPLICATION_FOLDER}/crowdsec:/var/lib/crowdsec/data/
+      # Added Docker Socket to monitor VoidAuth's instance - not yet sure configured with Crowdsec
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
-  radarr:
-    image: ghcr.io/hotio/radarr:latest
-    container_name: radarr
-    hostname: radarr.local
-    environment:
-      - PUID=13004
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/radarr:/config
-      - /opt/mediaserver/data:/data
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 7878:7878
-    restart: unless-stopped
-  prowlarr:
-    image: ghcr.io/hotio/prowlarr:latest
-    container_name: prowlarr
-    hostname: prowlarr.local
-    environment:
-      - PUID=13005
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/prowlarr:/config
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 9696:9696
-    restart: unless-stopped
-  configarr:
-    image: ghcr.io/raydak-labs/configarr:latest
-    container_name: configarr
-    hostname: configarr.local
-    environment:
-      - PUID=13006
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/configarr:/config
-      - /etc/localtime:/etc/localtime:ro
-  bazarr:
-    image: ghcr.io/hotio/bazarr:latest
-    container_name: bazarr
-    hostname: bazarr.local
-    environment:
-      - PUID=13007
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/bazarr:/config
-      - /opt/mediaserver/data:/data
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 6767:6767
-    restart: unless-stopped
-  seerr:
-    image: ghcr.io/hotio/seerr:latest
-    container_name: seerr
-    hostname: seerr.local
-    environment:
-      - PUID=13008
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/seerr:/config
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 5055:5055
-    restart: unless-stopped
-  homepage:
-    image: ghcr.io/gethomepage/homepage:latest
-    container_name: homepage
-    hostname: homepage.local
-    environment:
-      - PUID=13009
-      - PGID=13000
-      - HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/homepage:/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
-      - /etc/localtime:/etc/localtime:ro
+
+  voidauth: 
+    build:
+      context: .
+      target: serve
+    image: voidauth/voidauth:latest
+    container_name: voidauth
     ports:
       - 3000:3000
-    restart: unless-stopped
-  maintainerr:
-    image: ghcr.io/maintainerr/maintainerr:latest
-    container_name: maintainerr
-    hostname: maintainerr.local
     environment:
-      - PUID=13010
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
+      - PUID=13005
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - APP_URL=${APP_URL}
+      - DB_HOST=voidauth-db
+      - DB_PASSWORD=${DB_PASSWORD}
+      - STORAGE_KEY=${STORAGE_KEY}
     volumes:
-      - /opt/mediaserver/config/maintainarr:/config
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 6246:6246
-    restart: unless-stopped
-  unmanic:
-    image: ghcr.io/maintainerr/maintainerr:latest
-    container_name: unmanic
-    hostname: unmanic.local
+      - ${CONFIG_FOLDER}/voidauth:/app/config
+    depends_on:
+      voidauth-db:
+        condition: service_healthy
+
+  voidauth-db:
+    image: postgres:18
+    container_name: voidauth-db
     environment:
-      - PUID=13011
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
-    volumes:
-      - /opt/mediaserver/config/unmanic:/config
-      - /opt/mediaserver/data:/data
-      - /etc/localtime:/etc/localtime:ro
+      - PUID=13005
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - 8888:8888
+      - 5432:5432
+    volumes:
+      - ${APPLICATION_FOLDER}/voidauth:/var/lib/postgresql/18/docker
     restart: unless-stopped
+    healthcheck:
+      test: "pg_isready -U postgres -h localhost"
+
   jellyfin:
     container_name: jellyfin
     image: ghcr.io/hotio/jellyfin
@@ -179,10 +115,190 @@ services:
       - 8096:8096
     environment:
       - PUID=13000
-      - PGID=13000
-      - UMASK=002
-      - TZ=Europe/Amsterdam
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
     volumes:
-      - /opt/mediaserver/config/jellyfin:/config
-      - /opt/mediaserver/data:/data
+      - ${CONFIG_FOLDER}/jellyfin:/config
+      - ${APPLICATION_FOLDER}/jellyfin:/application
+      - ${MEDIA_FOLDER}/data:/data
+    restart: unless-stopped
+
+  seerr:
+    image: ghcr.io/hotio/seerr:latest
+    container_name: seerr
+    hostname: seerr.local
+    environment:
+      - PUID=13007
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/seerr:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
+  sonarr:
+    image: ghcr.io/hotio/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr.local
+    environment:
+      - PUID=13008
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/sonarr:/config
+      - ${MEDIA_FOLDER}/data:/data
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: ghcr.io/hotio/radarr:latest
+    container_name: radarr
+    hostname: radarr.local
+    environment:
+      - PUID=13009
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/radarr:/config
+      - ${MEDIA_FOLDER}/data:/data
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:latest
+    container_name: prowlarr
+    hostname: prowlarr.local
+    environment:
+      - PUID=13010
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+  configarr:
+    image: ghcr.io/raydak-labs/configarr:latest
+    container_name: configarr
+    hostname: configarr.local
+    environment:
+      - PUID=13011
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/configarr:/app/config
+      - ${APPLICATION_FOLDER}/configarr/cfs:/app/cfs
+      - ${APPLICATION_FOLDER}/configarr/repos:/app/repos
+      - ${APPLICATION_FOLDER}/configarr/templates:/app/templates
+
+  bazarr:
+    image: ghcr.io/hotio/bazarr:latest
+    container_name: bazarr
+    hostname: bazarr.local
+    environment:
+      - PUID=13012
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/bazarr:/config
+      - ${MEDIA_FOLDER}/data:/data
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+
+  calibre:
+    image: crocodilestick/calibre-web-automated:latest
+    container_name: calibre
+    hostname: calibre
+    environment:
+      - PUID=13013
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - HARDCOVER_TOKEN=${HARDCOVER_TOKEN}
+      - NETWORK_SHARE_MODE=false
+      - CWA_PORT_OVERRIDE=8083
+    volumes:
+      - ${CONFIG_FOLDER}/calibre:/config
+      - ${MEDIA_FOLDER}/data/media/books/ingest:/cwa-book-ingest
+      - ${MEDIA_FOLDER}/data/media/books:/books
+      - ${APPLICATION_FOLDER}/calibre:/calibre-library
+      - ${APPLICATION_FOLDER}/calibre/plugins:/config/.config/calibre/plugins
+    ports:
+      - 8083:8083
+    restart: unless-stopped
+
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:dev
+    container_name: shelfmark
+    environment:
+      - PUID=13014
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 8084:8084
+    volumes:
+      - ${MEDIA_FOLDER}/data/media/books:/books
+      - ${CONFIG_FOLDER}/shelfmark:/config
+      #- ${CONFIG_FOLDER}/calibre/app.db:/auth/app.db:ro
+    restart: unless-stopped
+
+  # Special docker container to update dynamic VPN IP on MAM
+  seedboxapi:
+    image: myanonamouse/seedboxapi
+    container_name: seedboxapi
+    network_mode: service:gluetun
+    environment:
+      - PUID=13015
+      - PGID=${PGID}
+      - DEBUG=1
+      - mam_id=${MAM_ID}
+    volumes:
+      - ${CONFIG_FOLDER}/gluetun:/config
+    restart: unless-stopped
+
+  qbittorrent:
+    image: ghcr.io/hotio/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: service:gluetun
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    environment:
+      - PUID=13015
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+      - WEBUI_PORT=8080/tcp
+      - WEBUI_HOST=*
+    volumes:
+      - ${CONFIG_FOLDER}/qbittorrent:/config
+      - ${MEDIA_FOLDER}/data:/data
+    restart: unless-stopped
+
+  sabnzbd:
+    image: ghcr.io/hotio/sabnzbd:latest
+    container_name: sabnzbd
+    hostname: sabnzbd
+    environment:
+      - PUID=13016
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+      - WEBUI_PORTS=8081/tcp
+    volumes:
+      - ${CONFIG_FOLDER}/sabnzbd:/config
+      - ${MEDIA_FOLDER}/data:/data
+    ports:
+      - 8081:8081
     restart: unless-stopped
