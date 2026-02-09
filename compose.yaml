@@ -24,11 +24,11 @@ services:
     - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
     - PORT_FORWARD_ONLY=on
     - VPN_PORT_FORWARDING=on
-    - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8080/api/v2/app/setPreferences 2>&1'
+    - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences 2>&1'
     - SERVER_COUNTRIES=Netherlands
     ports:
-    # Open ports 8080 locally so you can access Qbittorrent webinterface
-    - 8080:8080
+    # Open ports 8082 locally so you can access Qbittorrent webinterface
+    - 8082:8082
 
   caddy:
     image: serfriz/caddy-cloudflare-ddns-crowdsec:latest
@@ -55,18 +55,17 @@ services:
     image: crowdsecurity/crowdsec:latest
     container_name: crowdsec
     hostname: crowdsec
+    ports:
+      - 127.0.0.1:8080:8080
     environment:
       - PUID=13003
       - PGID=${PGID}
       - TZ=${TZ}
-      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/linux firix/authentik
+      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/linux
     volumes:
-      - ${CONFIG_FOLDER}/crowdsec:/etc/crowdsec:rw
-      - ${APPLICATION_FOLDER}/crowdsec/acquis/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
-      - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy:ro
+      - ${CONFIG_FOLDER}/crowdsec:/etc/crowdsec
+      - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy
       - ${APPLICATION_FOLDER}/crowdsec:/var/lib/crowdsec/data/
-      # Added Docker Socket to monitor VoidAuth's instance - not yet sure configured with Crowdsec
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
   voidauth:
@@ -85,9 +84,7 @@ services:
       - STORAGE_KEY=${STORAGE_KEY}
     volumes:
       - ${CONFIG_FOLDER}/voidauth:/app/config
-    depends_on:
-      voidauth-db:
-        condition: service_healthy
+    restart: unless-stopped
 
   jellyfin:
     image: ghcr.io/hotio/jellyfin
@@ -231,7 +228,8 @@ services:
     ports:
       - 8084:8084
     volumes:
-      - ${MEDIA_FOLDER}/data/media/books:/books
+      - ${MEDIA_FOLDER}/data/media/books/ingest:/ingest
+      - ${MEDIA_FOLDER}/data:/data
       - ${CONFIG_FOLDER}/shelfmark:/config
       #- ${CONFIG_FOLDER}/calibre/app.db:/auth/app.db:ro
     restart: unless-stopped
@@ -264,7 +262,7 @@ services:
       - PGID=${PGID}
       - UMASK=${UMASK}
       - TZ=${TZ}
-      - WEBUI_PORT=8080/tcp
+      - WEBUI_PORTS=8082/tcp
       - WEBUI_HOST=*
     volumes:
       - ${CONFIG_FOLDER}/qbittorrent:/config
