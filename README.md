@@ -1,7 +1,9 @@
 # Automated Home Media Server
 ## Features
 A complete guide to setting up a home media server with automated requests/downloads
-we will set up the following flow:
+we will set up the following flow for videos/tv series:
+
+### Video/TV series Flow
 1. Allow users to request media via Seerr
 2. Looking up indexers/trackers/RSS feeds via Prowlarr
 3. Compare results to quality profiles imported via Configarr
@@ -11,6 +13,11 @@ we will set up the following flow:
 7. Move to Jellyfin library & add to Jellyfin
 8. Give public access to Jellyfin with a secure reverse proxy via NPMplus + Crowdsec
 9. Manage unwatched files & unwatched requests with Maintainarr
+
+### Books
+1. Use Shelfmark to look up books
+2. Download books with Qbittorrent (Preferably use a certain private tracker)
+3. Ingest books in CalibreWeb Automated
 
 ## Table of Contents
 - [Automated Home Media Server](#automated-home-media-server)
