@@ -1,0 +1,58 @@
+# General configuration
+{
+    crowdsec {
+        api_url http://crowdsec:8080
+        api_key {env.CROWDSEC_API_KEY}
+        ticker_interval 60s
+    }
+    log {
+        output file /var/log/caddy/caddy.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+        format json
+    }
+    
+    cloudflare {
+        provider cloudflare {env.CLOUDFLARE_API_TOKEN}
+        domains {
+            {$ROOT_DOMAIN} jellyfin seerr auth library books
+        }
+        versions ipv4
+    }
+}
+
+# Snippets
+(voidauth) {
+    forward_auth voidauth:3000 {
+        uri /api/authz/forward-auth
+        copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+    }
+}
+
+# Domains
+{$ROOT_DOMAIN} {
+    reverse_proxy http://voidauth:3000
+}
+
+jellyfin.{$ROOT_DOMAIN} {
+    reverse_proxy http://jellyfin:8096
+}
+ 
+seerr.{$ROOT_DOMAIN} {
+    reverse_proxy http://seerr:5055
+}
+ 
+library.{$ROOT_DOMAIN} {
+    reverse_proxy http://calibre:8083
+}
+ 
+books.{$ROOT_DOMAIN} {
+    reverse_proxy http://shelfmark:8084
+}
+ 
+auth.{$ROOT_DOMAIN} {
+    reverse_proxy http://voidauth:3000
+}
+ 
+
