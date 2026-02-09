@@ -1,0 +1,9 @@
+{
+  "dns": ["1.1.1.1", "8.8.8.8"],
+  "shutdown-timeout": 30,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
