@@ -41,11 +41,11 @@ services:
       - PUID=13001
       - PGID=${PGID}
       - TZ=${TZ}
+      - ROOT_DOMAIN=${ROOT_DOMAIN}
       - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
       - CROWDSEC_API_KEY=${CROWDSEC_API_KEY}
-      - ROOT_DOMAIN=${ROOT_DOMAIN}
     volumes:
-      - ${APPLICATION_FOLDER}/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${APPLICATION_FOLDER}/caddy:/etc/caddy
       - ${APPLICATION_FOLDER}/caddy:/data
       - ${CONFIG_FOLDER}/caddy:/config
       - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy
@@ -58,14 +58,18 @@ services:
     ports:
       - 127.0.0.1:8080:8080
     environment:
-      - PUID=13003
+      - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/linux
+      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/linux Jgigantino31/calibre-web LePresidente/jellyfin LePresidente/jellyseerr
     volumes:
       - ${CONFIG_FOLDER}/crowdsec:/etc/crowdsec
-      - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy
       - ${APPLICATION_FOLDER}/crowdsec:/var/lib/crowdsec/data/
+      - ${APPLICATION_FOLDER}/caddy/logs:/var/log/caddy
+      - ${CONFIG_FOLDER}/jellyfin/log:/var/log/jellyfin
+      - ${CONFIG_FOLDER}/seerr/logs:/var/log/seerr
+      - ${APPLICATION_FOLDER}/calibre/logs:/var/log/calibre
+
     restart: unless-stopped
 
   voidauth:
@@ -114,6 +118,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${CONFIG_FOLDER}/seerr:/config
+      - ${APPLICATION_FOLDER}/seerr/logs:/var/log/seerr
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -213,6 +218,7 @@ services:
       - ${MEDIA_FOLDER}/data/media/books:/books
       - ${APPLICATION_FOLDER}/calibre:/calibre-library
       - ${APPLICATION_FOLDER}/calibre/plugins:/config/.config/calibre/plugins
+      - ${APPLICATION_FOLDER}/calibre/logs:/var/log/calibre
     ports:
       - 8083:8083
     restart: unless-stopped
