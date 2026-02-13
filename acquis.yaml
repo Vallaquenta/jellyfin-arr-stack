@@ -1,0 +1,23 @@
+source: file
+filenames:
+ - /var/log/caddy/access.log
+labels:
+  type: caddy
+---
+source: file
+filenames:
+ - /var/log/calibre/calibre.log
+labels:
+  type: calibre-web
+---
+source: file
+filenames:
+ - /var/log/jellyfin/log_*.log
+labels:
+  type: jellyfin
+---
+source: file
+filenames:
+ - /var/log/seerr/jellyseerr.log
+labels:
+  type: jellyseerr
