@@ -1,58 +1,122 @@
 # General configuration
 {
-    crowdsec {
-        api_url http://crowdsec:8080
-        api_key {env.CROWDSEC_API_KEY}
-        ticker_interval 60s
-    }
-    log {
-        output file /var/log/caddy/caddy.log {
-            roll_size 10mb
-            roll_keep 5
+        crowdsec {
+                api_url http://crowdsec:8080
+                api_key {$CROWDSEC_API_KEY}
+                ticker_interval 60s
         }
-        format json
-    }
-    
-    cloudflare {
-        provider cloudflare {env.CLOUDFLARE_API_TOKEN}
-        domains {
-            {$ROOT_DOMAIN} jellyfin seerr auth library books
+
+        log {
+                output file /var/log/caddy/access.log {
+                        roll_size 10mb
+                        roll_keep 5
+                }
         }
-        versions ipv4
-    }
+
+       dynamic_dns {
+               provider cloudflare {$CLOUDFLARE_API_KEY}
+               domains {
+                       {$ROOT_DOMAIN} jellyfin seerr auth library books
+               }
+               versions ipv4
+       }
 }
 
 # Snippets
-(voidauth) {
-    forward_auth voidauth:3000 {
-        uri /api/authz/forward-auth
-        copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
-    }
+(logging) {
+        @internal {
+                remote_ip 192.168.0.0/24 127.0.0.1
+        }
+        log_skip @internal
+        log {
+                output file /var/log/caddy/access.log {
+                        roll_size 10mb
+                        roll_keep 5
+                }
+                format json
+        }
+}
+
+(auth) {
+        forward_auth voidauth:3000 {
+                uri /api/authz/forward-auth
+                copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+        }
 }
 
 # Domains
 {$ROOT_DOMAIN} {
-    reverse_proxy http://voidauth:3000
+       tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        route {
+                crowdsec
+        }
+        respond "It's 404!"
 }
 
 jellyfin.{$ROOT_DOMAIN} {
-    reverse_proxy http://jellyfin:8096
+        tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        #import auth
+        route {
+                crowdsec
+        }
+        reverse_proxy http://jellyfin:8096
 }
- 
-seerr.{$ROOT_DOMAIN} {
-    reverse_proxy http://seerr:5055
-}
- 
-library.{$ROOT_DOMAIN} {
-    reverse_proxy http://calibre:8083
-}
- 
-books.{$ROOT_DOMAIN} {
-    reverse_proxy http://shelfmark:8084
-}
- 
-auth.{$ROOT_DOMAIN} {
-    reverse_proxy http://voidauth:3000
-}
- 
 
+seerr.{$ROOT_DOMAIN} {
+       tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        import auth        
+        route {
+                crowdsec
+        }
+        reverse_proxy http://seerr:5055
+}
+
+library.{$ROOT_DOMAIN} {
+       tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        import auth
+        route {
+                crowdsec
+        }
+        reverse_proxy http://calibre:8083
+}
+
+books.{$ROOT_DOMAIN} {
+       tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        import auth
+        route {
+                crowdsec
+        }
+        reverse_proxy http://shelfmark:8084
+}
+
+auth.{$ROOT_DOMAIN} {
+       tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        route {
+                crowdsec
+        }
+        reverse_proxy http://voidauth:3000
+}
