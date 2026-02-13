@@ -169,10 +169,11 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 Create the folder structure and the Caddyfile by entering the following commands:
 ```
 sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd}
-sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,configarr,calibre,}
+sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,seerr,configarr,calibre}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
-sudo touch /opt/mediaserver/application/caddy/Caddyfile
+sudo touch -rv /opt/mediaserver/application/caddy/logs/access.log
+sudo touch -rv /opt/mediaserver/application/caddy/Caddyfile
 ```
 ### Other media location
 If you're using an external mount point, you will have to adjust the /data/ folders to the mountpoint you've specified in your `/etc/fstab`. For example, we're using the `media` mounted in `mnt` here, while omitting the data folder.
@@ -194,6 +195,7 @@ sudo chown -R voidauth:mediaserver /opt/mediaserver/application/voidauth
 sudo chown -R jellyfin:mediaserver /opt/mediaserver/config/jellyfin
 sudo chown -R jellyfin:mediaserver /opt/mediaserver/application/jellyfin
 sudo chown -R seerr:mediaserver /opt/mediaserver/config/seerr
+sudo chown -R seerr:mediaserver /opt/mediaserver/application/seerr
 sudo chown -R sonarr:mediaserver /opt/mediaserver/config/sonarr
 sudo chown -R radarr:mediaserver /opt/mediaserver/config/radarr
 sudo chown -R prowlarr:mediaserver /opt/mediaserver/config/prowlarr
@@ -203,25 +205,26 @@ sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
 sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
 sudo chown -R calibre:mediaserver /opt/mediaserver/application/calibre
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
+sudo chown -R shelfmark:mediaserver /opt/mediaserver/data/media/books/ingest
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
 sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 ```
 
-If you're using an external mount point to store all large media files, also chmod those.
+If you're using an external mount point to store all large media files, apply the same chmod to those.
 ```
 sudo chmod -R a=,a+rX,u+w,g+w /mnt/media/data
 ```
 
 ## Docker Compose File
 Now that all file and folder permissions are set up we want to set up our docker compose file. The location for this file will be in our home folder `/home/mediauser` for ease of use.
-Just do `nano compose.yaml` and copy and past the contents of [this file](/compose.yaml)
+Just do `nano compose.yml` and copy and past the contents of [this file](/compose.yml)
 
 # Application installation
 Launch all our Docker containers by doing `docker compose up -d`. It will now start pulling all images automatically. We will move on to configure every app individually
 
 ## qBittorrent
-Access the WebUI (default port 8080). It will automatically create a password for you that you can access by doing `docker logs qbittorrent`. The output will have your password in it.
+Access the WebUI (port 8082). It will automatically create a password for you that you can access by doing `docker logs qbittorrent`. The output will have your password in it.
 <details>
   <summary>Screenshot</summary>
   
@@ -281,8 +284,8 @@ Set up the download clients by going to `Settings -> Download Clients -> + icon`
 Change the following settings based on personal preference.
 - Category to `tv` to be consistent across the board
 - Download in sequential order in order to prioritise the first episodes/movies
-- Client priority is set to 50 (lowest) for me, since I prefer newsgroups
-- Remove completed is unchecked for me since Prowlarr will have ratio's set up
+- Client priority is set to 50 (lowest) for me, since I prefer newsgroups/Usenet
+- Remove completed is unchecked for me since Prowlarr will have ratios set up
 <details>
   <summary>Screenshots</summary>
   
@@ -308,8 +311,8 @@ You will need to set the following:
 
 ### Client sync
 We want to synchronise Prowlarr with Sonarr & Radarr. To do this go to `Settings -> Apps` in the Prowlarr settings. Then set the following values
-- Prowlarr server: `http://prowlarr.local:9696`
-- Sonarr server: `http://sonarr.local:8989`
+- Prowlarr server: `http://prowlarr:9696`
+- Sonarr server: `http://sonarr:8989`
 - API key: get this from your Sonarr/Radarr installation by navigating to `Settings -> General -> Security` (see screenshot)
 <details>
   <summary>Screenshots</summary>
