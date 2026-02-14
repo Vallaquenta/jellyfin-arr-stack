@@ -54,7 +54,7 @@
         route {
                 crowdsec
         }
-        respond "It's 404!"
+        respond 404
 }
 
 jellyfin.{$ROOT_DOMAIN} {
