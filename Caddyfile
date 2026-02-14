@@ -16,7 +16,7 @@
        dynamic_dns {
                provider cloudflare {$CLOUDFLARE_API_KEY}
                domains {
-                       {$ROOT_DOMAIN} jellyfin seerr auth library books
+                       {$ROOT_DOMAIN} jellyfin seerr auth library books home
                }
                versions ipv4
        }
@@ -119,4 +119,17 @@ auth.{$ROOT_DOMAIN} {
                 crowdsec
         }
         reverse_proxy http://voidauth:3000
+}
+
+home.{$ROOT_DOMAIN} {
+        tls {
+               dns cloudflare {$CLOUDFLARE_API_KEY}
+               resolvers 1.1.1.1
+       }
+        import logging
+        import auth
+        route {
+                crowdsec
+        }
+        reverse_proxy http://192.168.1.20:3001
 }

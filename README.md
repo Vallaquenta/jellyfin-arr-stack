@@ -103,6 +103,7 @@ sudo useradd calibre -u 13013
 sudo useradd shelfmark -u 13014
 sudo useradd qbittorrent -u 13015
 sudo useradd sabnzbd -u 13016
+sudo useradd homepage -u 13017
 ```
 
 Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
@@ -125,6 +126,7 @@ sudo usermod -a -G mediaserver calibre
 sudo usermod -a -G mediaserver shelfmark
 sudo usermod -a -G mediaserver qbittorrent
 sudo usermod -a -G mediaserver sabnzbd
+sudo usermod -a -G mediaserver homepage
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
@@ -168,7 +170,7 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 
 Create the folder structure and the Caddyfile by entering the following commands:
 ```
-sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd}
+sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd,homepage}
 sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,seerr,configarr,calibre}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
@@ -208,6 +210,7 @@ sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/data/media/books/ingest
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
+sudo chown -R homepage:mediaserver /opt/mediaserver/config/homepage
 sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 ```
 

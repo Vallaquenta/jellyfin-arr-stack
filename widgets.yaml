@@ -1,0 +1,24 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/info-widgets/
+
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+
+- datetime:
+    locale: nl
+    text_size: xl
+    format:
+      timeStyle: short
+
+- openmeteo:
+    label: Hardenberg
+    latitude: 52.5754706
+    longitude: 6.6188242
+    timezone: Europe/Amsterdam
+    units: metric # or imperial
+    cache: 5 # Time in minutes to cache API responses, to stay within limits
+    format: # optional, Intl.NumberFormat options
+      maximumFractionDigits: 1

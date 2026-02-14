@@ -1,0 +1,59 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/services/
+
+- Media:
+  - Jellyfin:
+      description: Jellyfin
+      icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/jellyfin.png
+      href: https://jellyfin.${ROOT_DOMAIN}
+      widget:
+        type: jellyfin
+        url: http://jellyfin:8096
+        key: ${JELLYFIN_API_KEY}
+        version: 2
+        enableBlocks: true
+        enableNowPlaying: true
+        enableUser: true
+        enableMediaControl: true
+        showEpisodeNumber: true
+        expandOneStreamToTwoRows: false
+        headers:
+          Remote-user: homepage
+          X-auth-key: oLL^ztE&n4cwr8mq$oiWVHxD1AJdcO
+  - Seerr:
+      description: Seerr
+      icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/jellyseerr.png
+      href: https://seerr.${ROOT_DOMAIN}
+      widget:
+        type: jellyseerr
+        url: http://seerr:5055
+        key: ${SEERR_API_KEY}
+        headers:
+          Remote-user: homepage
+          X-auth-key: oLL^ztE&n4cwr8mq$oiWVHxD1AJdcO
+
+- Books:
+  - Calibre:
+      description: CalibreWeb Automated
+      icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/calibre-web-automated-book-downloader.png
+      href: https://library.${ROOT_DOMAIN}
+      widget:
+        type: calibreweb
+        url: http://calibre:8083
+        username: homepage
+        password: oLL^ztE&n4cwr8mq$oiWVHxD1AJdcO
+        headers:
+          Remote-user: homepage
+          X-auth-key: oLL^ztE&n4cwr8mq$oiWVHxD1AJdcO
+
+- Monitoring:
+  - Crowdsec:
+      description: Crowdsec
+      icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/crowdsec.svg
+      widget:
+        type: crowdsec
+        url: http://crowdsec:8080
+        username: localhost # machine_id in crowdsec
+        password: KIEXQITOHAJ09GrAHdh9GpGwPpVVseeBTsPPP83EL0e6bWbpJLPj8iiarvr7A0dB
+        limit24h: true # optional, limits alerts to last 24h. Default: false
