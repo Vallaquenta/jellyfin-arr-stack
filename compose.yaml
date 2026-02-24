@@ -27,7 +27,8 @@ services:
     - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences 2>&1'
     - SERVER_COUNTRIES=Netherlands
     ports:
-    # Open ports 8082 locally so you can access Qbittorrent webinterface
+    # Allow ports through for local access (5010 Mousehole, 8082 qbit)
+    - 5010:5010
     - 8082:8082
 
   caddy:
@@ -268,19 +269,16 @@ services:
       - ${CONFIG_FOLDER}/shelfmark:/config
     restart: unless-stopped
 
-  # Special docker container to update dynamic VPN IP on MAM
-  seedboxapi:
-    image: myanonamouse/seedboxapi
-    container_name: seedboxapi
-    # can't use hostname with network_mode
-    network_mode: service:gluetun
+  mousehole:
+    image: tmmrtn/mousehole:latest
+    network_mode: "service:gluetun"
     environment:
       - PUID=13015
       - PGID=${PGID}
-      - DEBUG=1
-      - mam_id=${MAM_ID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
     volumes:
-      - ${CONFIG_FOLDER}/gluetun:/config
+      - ${CONFIG_FOLDER}/mousehole:/srv/mousehole
     restart: unless-stopped
 
   qbittorrent:
