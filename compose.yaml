@@ -207,6 +207,51 @@ services:
       - 6767:6767
     restart: unless-stopped
 
+  booklore:
+    image: booklore/booklore:latest
+    container_name: booklore
+    hostname: booklore
+    environment:
+      - USER_ID=13013
+      - GROUP_ID=${PGID}
+      - TZ=${TZ}
+      - UMASK=${UMASK}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_USERNAME=${MARIA_DB_USER}
+      - DATABASE_PASSWORD=${MARIA_DB_PASSWORD}
+      - BOOKLORE_PORT=6060
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - 6060:6060
+    volumes:
+      - ${APPLICATION_FOLDER}/booklore:/app/data
+      - ${MEDIA_FOLDER}/data/media/books:/books
+      - ${MEDIA_FOLDER}/data/media/books/ingest:/bookdrop
+    restart: unless-stopped
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.5
+    container_name: mariadb
+    hostname: mariadb
+    environment:
+      - PUID=13013
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MARIA_DB_USER}
+      - MYSQL_PASSWORD=${MARIA_DB_PASSWORD}
+    volumes:
+      - ${CONFIG_FOLDER}/booklore/mariadb/config:/config
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   shelfmark:
     image: ghcr.io/calibrain/shelfmark:dev
     container_name: shelfmark
@@ -274,21 +319,3 @@ services:
     ports:
       - 8081:8081
     restart: unless-stopped
-
-  homepage:
-    image: ghcr.io/gethomepage/homepage:latest
-    container_name: homepage
-    hostname: homepage
-    environment:
-      - PUID=13017
-      - PGID=${PGID}
-      - UMASK=${UMASK}
-      - TZ=${TZ}
-      - ROOT_DOMAIN=${ROOT_DOMAIN}
-      - JELLYFIN_API_KEY=${JELLYFIN_API_KEY}
-      - SEERR_API_KEY=${SEERR_API_KEY}
-      - HOMEPAGE_ALLOWED_HOSTS=home.${ROOT_DOMAIN},192.168.1.20:3001
-    volumes:
-      - ${CONFIG_FOLDER}/homepage:/app/config
-    ports:
-      - 3001:3000

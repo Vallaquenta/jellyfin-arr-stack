@@ -17,7 +17,7 @@ we will set up the following flow for videos/tv series:
 ### Books
 1. Use Shelfmark to look up books
 2. Download books with Qbittorrent (Preferably use a certain private tracker)
-3. Ingest books in CalibreWeb Automated
+3. Ingest books in Booklore
 
 ## Table of Contents
 - [Automated Home Media Server](#automated-home-media-server)
@@ -99,7 +99,7 @@ sudo useradd radarr -u 13009
 sudo useradd prowlarr -u 13010
 sudo useradd configarr -u 13011
 sudo useradd bazarr -u 13012
-sudo useradd calibre -u 13013
+sudo useradd booklore -u 13013
 sudo useradd shelfmark -u 13014
 sudo useradd qbittorrent -u 13015
 sudo useradd sabnzbd -u 13016
@@ -122,7 +122,7 @@ sudo usermod -a -G mediaserver radarr
 sudo usermod -a -G mediaserver prowlarr
 sudo usermod -a -G mediaserver configarr
 sudo usermod -a -G mediaserver bazarr
-sudo usermod -a -G mediaserver calibre
+sudo usermod -a -G mediaserver booklore
 sudo usermod -a -G mediaserver shelfmark
 sudo usermod -a -G mediaserver qbittorrent
 sudo usermod -a -G mediaserver sabnzbd
@@ -170,8 +170,8 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 
 Create the folder structure and the Caddyfile by entering the following commands:
 ```
-sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,calibre,shelfmark,qbittorrent,sabnzbd,homepage}
-sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,seerr,configarr,calibre}
+sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,shelfmark,qbittorrent,sabnzbd}
+sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,seerr,configarr,booklore}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
 sudo touch -rv /opt/mediaserver/application/caddy/logs/access.log
@@ -204,13 +204,11 @@ sudo chown -R prowlarr:mediaserver /opt/mediaserver/config/prowlarr
 sudo chown -R configarr:mediaserver /opt/mediaserver/config/configarr
 sudo chown -R configarr:mediaserver /opt/mediaserver/application/configarr
 sudo chown -R bazarr:mediaserver /opt/mediaserver/config/bazarr
-sudo chown -R calibre:mediaserver /opt/mediaserver/config/calibre
-sudo chown -R calibre:mediaserver /opt/mediaserver/application/calibre
+sudo chown -R booklore:mediaserver /opt/mediaserver/application/booklore
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/config/shelfmark
 sudo chown -R shelfmark:mediaserver /opt/mediaserver/data/media/books/ingest
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
-sudo chown -R homepage:mediaserver /opt/mediaserver/config/homepage
 sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 ```
 
