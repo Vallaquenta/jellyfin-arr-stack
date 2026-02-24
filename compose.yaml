@@ -108,19 +108,25 @@ services:
     restart: unless-stopped
 
   seerr:
-    image: ghcr.io/hotio/seerr:latest
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
     container_name: seerr
     hostname: seerr
+    user: 13007:${PGID}
     environment:
-      - PUID=13007
-      - PGID=${PGID}
-      - UMASK=${UMASK}
+      - LOG-LEVEL=debug
       - TZ=${TZ}
     volumes:
-      - ${CONFIG_FOLDER}/seerr:/config
+      - ${CONFIG_FOLDER}/seerr:/app/config
       - ${APPLICATION_FOLDER}/seerr/logs:/var/log/seerr
     ports:
       - 5055:5055
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     restart: unless-stopped
 
   sonarr:
@@ -201,28 +207,6 @@ services:
       - 6767:6767
     restart: unless-stopped
 
-  calibre:
-    image: crocodilestick/calibre-web-automated:latest
-    container_name: calibre
-    hostname: calibre
-    environment:
-      - PUID=13013
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - HARDCOVER_TOKEN=${HARDCOVER_TOKEN}
-      - NETWORK_SHARE_MODE=false
-      - CWA_PORT_OVERRIDE=8083
-    volumes:
-      - ${CONFIG_FOLDER}/calibre:/config
-      - ${MEDIA_FOLDER}/data/media/books/ingest:/cwa-book-ingest
-      - ${MEDIA_FOLDER}/data/media/books:/books
-      - ${APPLICATION_FOLDER}/calibre:/calibre-library
-      - ${APPLICATION_FOLDER}/calibre/plugins:/config/.config/calibre/plugins
-      - ${APPLICATION_FOLDER}/calibre/logs:/var/log/calibre
-    ports:
-      - 8083:8083
-    restart: unless-stopped
-
   shelfmark:
     image: ghcr.io/calibrain/shelfmark:dev
     container_name: shelfmark
@@ -237,7 +221,6 @@ services:
       - ${MEDIA_FOLDER}/data/media/books/ingest:/ingest
       - ${MEDIA_FOLDER}/data:/data
       - ${CONFIG_FOLDER}/shelfmark:/config
-      #- ${CONFIG_FOLDER}/calibre/app.db:/auth/app.db:ro
     restart: unless-stopped
 
   # Special docker container to update dynamic VPN IP on MAM
@@ -274,11 +257,7 @@ services:
       - ${CONFIG_FOLDER}/qbittorrent:/config
       - ${MEDIA_FOLDER}/data:/data
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-
+    
   sabnzbd:
     image: ghcr.io/hotio/sabnzbd:latest
     container_name: sabnzbd
