@@ -5,31 +5,27 @@ services:
     image: qmcgaw/gluetun
     container_name: gluetun
     cap_add:
-    - NET_ADMIN
+      - NET_ADMIN
     devices:
-    - /dev/net/tun:/dev/net/tun
+      - /dev/net/tun:/dev/net/tun
     volumes:
-    - ${CONFIG_FOLDER}/gluetun:/gluetun
+      - ${CONFIG_FOLDER}/gluetun:/gluetun
     environment:
-    - PUID=13002
-    - PGID=${PGID}
-    - TZ=${TZ}
-    - UPDATER_PERIOD=24h
-    - VPN_SERVICE_PROVIDER=protonvpn
-    - VPN_TYPE=wireguard
-    - BLOCK_MALICIOUS=off
-    - OPENVPN_USER=${OPENVPN_USER}
-    - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-    - OPENVPN_CIPHERS=AES-256-GCM
-    - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-    - PORT_FORWARD_ONLY=on
-    - VPN_PORT_FORWARDING=on
-    - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences 2>&1'
-    - SERVER_COUNTRIES=Netherlands
+      - PUID=13002
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - BLOCK_MALICIOUS=off
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - PORT_FORWARD_ONLY=on
+      - VPN_PORT_FORWARDING=on
+      - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences 2>&1'
+      - SERVER_COUNTRIES=Netherlands
     ports:
-    # Allow ports through for local access (5010 Mousehole, 8082 qbit)
-    - 5010:5010
-    - 8082:8082
+      # Allow ports through for local access (5010 Mousehole, 8082 qbit)
+      - 5010:5010
+      - 8082:8082
 
   caddy:
     image: serfriz/caddy-cloudflare-ddns-crowdsec:latest
@@ -70,7 +66,6 @@ services:
       - ${CONFIG_FOLDER}/jellyfin/log:/var/log/jellyfin
       - ${CONFIG_FOLDER}/seerr/logs:/var/log/seerr
       - ${APPLICATION_FOLDER}/calibre/logs:/var/log/calibre
-
     restart: unless-stopped
 
   voidauth:
@@ -106,6 +101,8 @@ services:
       - ${CONFIG_FOLDER}/jellyfin:/config
       - ${APPLICATION_FOLDER}/jellyfin:/application
       - ${MEDIA_FOLDER}/data:/data
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     restart: unless-stopped
 
   seerr:
@@ -126,7 +123,7 @@ services:
       test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
       start_period: 20s
       timeout: 3s
-      interval: 15s
+      interval: 60s
       retries: 3
     restart: unless-stopped
 
@@ -316,4 +313,21 @@ services:
       - ${MEDIA_FOLDER}/data:/data
     ports:
       - 8081:8081
+    restart: unless-stopped
+
+  notifiarr:
+    container_name: notifiarr
+    hostname: notifiarr
+    image: golift/notifiarr
+    environment:
+      - PUID=13016
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/notifiarr:/config
+      - /var/run/utmp:/var/run/utmp
+      - /etc/machine-id:/etc/machine-id
+    ports:
+      - 5454:5454
     restart: unless-stopped
