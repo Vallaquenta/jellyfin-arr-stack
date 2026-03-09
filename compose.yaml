@@ -20,8 +20,8 @@ services:
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - PORT_FORWARD_ONLY=on
       - VPN_PORT_FORWARDING=on
-      - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8082/api/v2/app/setPreferences 2>&1'
-      - SERVER_COUNTRIES=Netherlands
+      - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- -nv --retry-connrefused --post-data "json={\"listen_port\":{{PORT}},\"current_network_interface\":\"{{VPN_INTERFACE}}\",\"random_port\":false,\"upnp\":false}" http://127.0.0.1:8082/api/v2/app/setPreferences'
+      - VPN_PORT_FORWARDING_DOWN_COMMAND=/bin/sh -c 'wget -O- -nv --retry-connrefused --post-data "json={\"listen_port\":0,\"current_network_interface\":\"lo\"}" http://127.0.0.1:8082/api/v2/app/setPreferences'
     ports:
       # Allow ports through for local access (5010 Mousehole, 8082 qbit)
       - 5010:5010
@@ -331,3 +331,51 @@ services:
     ports:
       - 5454:5454
     restart: unless-stopped
+
+  unmanic:
+      container_name: unmanic
+      image: josh5/unmanic:latest
+      ports:
+        - 8888:8888
+      environment:
+        - PUID=13018
+        - PGID=${PGID}
+      volumes:
+        - ${CONFIG_FOLDER}/unmanic:/config
+        - ${MEDIA_FOLDER}/data/media:/library
+        - ${APPLICATION_FOLDER}/unmanic:/tmp/unmanic
+      devices:
+        - /dev/dri/renderD128:/dev/dri/renderD128
+      restart: unless-stopped
+    
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:latest
+    restart: unless-stopped
+    #logging:
+    #  driver: json-file
+    #  options:
+    #    max-file: ${DOCKERLOGGING_MAXFILE}
+    #    max-size: ${DOCKERLOGGING_MAXSIZE}
+    user: 13018:${PGID}
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_FOLDER}/autobrr/config:/config
+    ports:
+      - 7474:7474
+
+  # postgres-db:
+  #   image: postgres:18.1
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PW}
+  #   volumes:
+  #     - ${APPLICATION_FOLDER}/postgres/:/var/lib/postgresql
+  #   healthcheck:
+  #     test: "pg_isready -U postgres -h localhost"
+  #     start_period: 20s
+  #     timeout: 3s
+  #     interval: 15s
+  #     retries: 5
+  #   restart: unless-stopped

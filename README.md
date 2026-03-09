@@ -95,6 +95,8 @@ sudo useradd shelfmark -u 13014
 sudo useradd qbittorrent -u 13015
 sudo useradd sabnzbd -u 13016
 sudo useradd notifiarr -u 13017
+sudo useradd unmanic -u 13018
+sudo useradd autobrr -u 13019
 ```
 
 Then we want to add all users to the mediacenter group and add our mediauser to the docker group, so it can access the docker repositories:
@@ -118,6 +120,8 @@ sudo usermod -a -G mediaserver shelfmark
 sudo usermod -a -G mediaserver qbittorrent
 sudo usermod -a -G mediaserver sabnzbd
 sudo usermod -a -G mediaserver notifiarr
+sudo usermod -a -G mediaserver unmanic
+sudo usermod -a -G mediaserver autobrr
 ```
 ## Configure mediauser
 Now we want to create a password for `mediauser`, do: `sudo passwd mediauser`. This will prompt you for a new password.
@@ -161,8 +165,8 @@ Make sure you're logged in as the user `mediauser` we've previously set up by do
 
 Create the folder structure and the Caddyfile by entering the following commands:
 ```
-sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,shelfmark,qbittorrent,sabnzbd,notifiarr}
-sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,seerr,configarr,booklore}
+sudo mkdir -pv /opt/mediaserver/config/{caddy,gluetun,crowdsec,voidauth,jellyfin,seerr,sonarr,radarr,prowlarr,configarr,bazarr,shelfmark,qbittorrent,sabnzbd,notifiarr,unmanic,autobrr}
+sudo mkdir -pv /opt/mediaserver/application/{caddy,crowdsec,voidauth,jellyfin,seerr,configarr,booklore,unmanic}
 sudo mkdir -pv /opt/mediaserver/data/{torrents,media,usenet}/{movies,tv,books}
 sudo mkdir -pv /opt/mediaserver/data/media/books/ingest
 sudo touch -rv /opt/mediaserver/application/caddy/logs/access.log
@@ -201,6 +205,9 @@ sudo chown -R shelfmark:mediaserver /opt/mediaserver/data/media/books/ingest
 sudo chown -R qbittorrent:mediaserver /opt/mediaserver/config/qbittorrent
 sudo chown -R sabnzbd:mediaserver /opt/mediaserver/config/sabnzbd
 sudo chown -R notifiarr:mediaserver /opt/mediaserver/config/notifiarr
+sudo chown -R unmanic:mediaserver /opt/mediaserver/config/unmanic
+sudo chown -R unmanic:mediaserver /opt/mediaserver/application/unmanic
+sudo chown -R autobrr:mediaserver /opt/mediaserver/config/autobrr
 sudo chmod -R a=,a+rX,u+w,g+w /opt/mediaserver
 ```
 
